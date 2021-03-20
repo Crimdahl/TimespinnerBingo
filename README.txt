@@ -27,6 +27,8 @@ Item Categories:
 
 ![Bingo Settings](https://raw.githubusercontent.com/Crimdahl/TimespinnerBingo/main/Screenshots/settings.JPG)
 
+<img src="https://raw.githubusercontent.com/Crimdahl/TimespinnerBingo/main/Screenshots/settings.JPG" />
+
 ![Bingo Large](https://raw.githubusercontent.com/Crimdahl/TimespinnerBingo/main/Screenshots/large.JPG)
 
 ![Bingo Small](https://raw.githubusercontent.com/Crimdahl/TimespinnerBingo/main/Screenshots/small.JPG)

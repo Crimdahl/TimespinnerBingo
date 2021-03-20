@@ -7,14 +7,11 @@ if getattr(sys, "frozen", False):
     SETTINGS_PATH = os.path.join(os.path.dirname(sys.executable), "settings.txt")
 elif __file__:
     SETTINGS_PATH = os.path.join(os.path.dirname(__file__), "settings.txt")
-#SETTINGSLIST = ["consumables", "questItems", "relics", "orbs", "passives", "spells",
-#                "armor", "headgear", "useTrinkets", "useKeycards", "useFamiliars", "useMiscellaneous",
-#                "useCompactMode", "allowDuplicates", "rows", "columns"]
 
 class Settings(object):
     def __init__(self):
         #Apply default settings
-        self.consumables = {"friendlyName":"Use Consumables", "settingtype": "item", "value":True, "items":["Antidote", "Berry Pick-Mi-Up", "Berry Pick-Mi-Up Plus", "Biscuit", "Chaos Rose", "Cheveur Breast", "Cheveur Drumstick",
+        self.consumables = {"friendlyName":"Use Consumables", "settingtype": "item", "value":True, "items":["Antidote", "Berry Pick-Mi-Up", "Berry Pick-Mi-Up+", "Biscuit", "Chaos Rose", "Cheveur Breast", "Cheveur Drumstick",
                         "Dream Wisp", "Eel Meat", "Empress Cake", "Ether", "Filigree Tea", "Hi-Ether", "Hi-Potion", "Jerky", "Mind Refresh Ultra",
                         "Mind Refresh", "Mushroom", "Orange Juice", "Plump Maggot", "Potion", "Rotten Tail", "Sand Bottle", "Sand Vial",
                         "Spaghetti", "Warp Shard", "Wyvern Tail"]}

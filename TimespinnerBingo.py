@@ -18,12 +18,6 @@ class TimespinnerBingo(tkinter.Frame):
         self.btnGenerate = None
         self.variables={}
 
-        
-        #frame = tkinter.Frame(
-        #    self.master
-        #)
-        #frame.grid(row=len(self.settings.__dict__.items()) + 1, column=1, padx=2, pady=2)
-
         #Label at the top of Column 1
         widget = tkinter.Label(
             master=self.master,
@@ -78,9 +72,8 @@ class TimespinnerBingo(tkinter.Frame):
             width=5,
             values = ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
             )
-        self.cbRows.current(self.settings.rows["value"])
+        self.cbRows.current(int(self.settings.rows["value"]) - 1)
         self.cbRows.bind("<<ComboboxSelected>>", lambda x:self.rowsChanged())
-        #self.cbRows.config(command = )
         self.cbRows.grid(row=2, column=3, padx=(0, 10), sticky="w")
 
         widget = tkinter.Label(
@@ -95,9 +88,9 @@ class TimespinnerBingo(tkinter.Frame):
             width=5,
             values = ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
             )
-        self.cbColumns.current(self.settings.columns["value"])
+        print(self.settings.columns["value"])
+        self.cbColumns.current(int(self.settings.columns["value"]) - 1)
         self.cbColumns.bind("<<ComboboxSelected>>", lambda x:self.columnsChanged())
-        #self.cbColumns.config(command = lambda arg=self.cbColumns:self.columnsChanged(arg))
         self.cbColumns.grid(row=3, column=3, padx=(0, 10), sticky="w")
         
         var = tkinter.BooleanVar()
@@ -135,19 +128,6 @@ class TimespinnerBingo(tkinter.Frame):
             )
         self.lblRequiredIcons.grid(row=7, column=3, padx=(0, 10), sticky="w")
 
-        #widget = tkinter.Label(
-        #    master=self.master,
-        #    text="Seed: "
-        #    )
-        #widget.grid(row=9, column=2, padx=(10, 0), sticky="e")
-
-        #self.tfSeed = tkinter.Text(
-        #    master=self.master,
-        #    width=16,
-        #    height=1
-        #    )
-        #self.tfSeed.grid(row=10, column=2, columnspan=2, padx=(10, 0), sticky="w")
-
         var = tkinter.BooleanVar()
         widget = tkinter.Checkbutton(
             master=self.master,
@@ -177,11 +157,15 @@ class TimespinnerBingo(tkinter.Frame):
         
     def calculateAvailableIcons(self):
         self.availableIcons = 0
+        items = set()
         for k, v in self.settings.__dict__.items():
             if type(v) is dict:
                 if v["value"] and "items" in v:
-                    self.availableIcons += len(v["items"])
+                    for item in v["items"]:
+                        items.add(item)
+        self.availableIcons += len(items)
         self.lblAvailableIcons["text"] = text=str(self.availableIcons)
+        self.validateRequiredIcons()
 
     def calculateRequiredIcons(self):
         self.requiredIcons = int(self.cbRows.get()) * int(self.cbColumns.get())
@@ -199,23 +183,27 @@ class TimespinnerBingo(tkinter.Frame):
         self.settings.Save()
         if self.settings.allowDuplicates["value"]:
             self.lblAvailableIcons["text"] = "Infinite"
+            self.validateRequiredIcons()
         else:
             self.calculateAvailableIcons()
         return
 
     def rowsChanged(self):
+        print("Saving rows:" + self.cbRows.get())
         self.settings.setRows(int(self.cbRows.get()))
         self.settings.Save()
         self.calculateRequiredIcons()
         self.validateRequiredIcons()
 
     def columnsChanged(self):
+        print("Saving columns:" + self.cbColumns.get())
         self.settings.setColumns(int(self.cbColumns.get()))
         self.settings.Save()
         self.calculateRequiredIcons()
         self.validateRequiredIcons()
 
     def validateRequiredIcons(self):
+        print(str(self.settings.allowDuplicates["value"]))
         if not self.settings.allowDuplicates["value"]:
             if int(self.lblAvailableIcons["text"]) - int(self.lblRequiredIcons["text"]) < 0:
                 self.btnGenerate["state"] = tkinter.DISABLED
@@ -238,7 +226,5 @@ class TimespinnerBingo(tkinter.Frame):
 if __name__ == "__main__":
     root = tkinter.Tk()
     settingsUI = TimespinnerBingo(root)
-    
-    #board = Bingoboard.BingoBoard(root, GUI.settings)
     root.title("Bingo Settings")
     root.mainloop()

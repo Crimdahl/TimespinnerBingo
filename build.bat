@@ -1,1 +1,1 @@
-pyinstaller TimespinnerBingo.py -F -n TimespinnerBingo --add-data Icons;Icons
+pyinstaller TimespinnerBingo.py --noconsole -F -n TimespinnerBingo --add-data Icons;Icons

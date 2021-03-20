@@ -25,8 +25,8 @@ Item Categories:
 	familiars = Demon, Griffin, Kobo, Merchant Crow, Meyef, Sprite
 	miscellaneous = Aura Up, Elemental Beads, Essence Crystal, Gold Necklace, Gold Ring, Health Up, Herb, Sand Up, Shiny Rock
 
-![Bingo Settings](https://github.com/Crimdahl/TimespinnerBingo/blob/main/Screenshots/settings.jpg?raw=true)
+![Bingo Settings](https://raw.githubusercontent.com/Crimdahl/TimespinnerBingo/main/Screenshots/settings.JPG)
 
-![Bingo Large](https://github.com/Crimdahl/TimespinnerBingo/blob/main/Screenshots/large.JPG?raw=true)
+![Bingo Large](https://raw.githubusercontent.com/Crimdahl/TimespinnerBingo/main/Screenshots/large.JPG)
 
-![Bingo Small](https://github.com/Crimdahl/TimespinnerBingo/blob/main/Screenshots/small.jpg?raw=true)
+![Bingo Small](https://raw.githubusercontent.com/Crimdahl/TimespinnerBingo/main/Screenshots/small.JPG)

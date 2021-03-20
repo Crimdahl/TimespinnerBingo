@@ -24,3 +24,9 @@ Item Categories:
     	keycards = Elevator Keycard, Keycard A, Keycard B, Keycard C, Keycard D, Keycard V
 	familiars = Demon, Griffin, Kobo, Merchant Crow, Meyef, Sprite
 	miscellaneous = Aura Up, Elemental Beads, Essence Crystal, Gold Necklace, Gold Ring, Health Up, Herb, Sand Up, Shiny Rock
+
+![Bingo3](https://user-images.githubusercontent.com/79439636/111888191-a3c86200-89b0-11eb-99a9-1e335ebaf40a.JPG)
+
+![Bingo1](https://user-images.githubusercontent.com/79439636/111888193-aaef7000-89b0-11eb-8fbe-2480d0812c88.JPG)
+
+![Bingo2](https://user-images.githubusercontent.com/79439636/111888195-af1b8d80-89b0-11eb-966b-fd4dfd47f017.JPG)e-2480d0812c88.JPG)

@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31105.61
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "TimespinnerBingo", "TimespinnerBingo.pyproj", "{E2F836D6-5ACC-4ECA-86BB-90E6B05255AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E2F836D6-5ACC-4ECA-86BB-90E6B05255AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2F836D6-5ACC-4ECA-86BB-90E6B05255AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E4F51329-6021-42C9-BE74-D391B3090BD0}
+	EndGlobalSection
+EndGlobal

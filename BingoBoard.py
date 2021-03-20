@@ -19,7 +19,7 @@ class BingoBoard(tkinter.Frame):
                      "Scythe Ring", "Shadow Seal", "Shield Ring", "Silence Ring", "Star of Lachiem", "Sun Ring", "Tailwind Ring"]
     spells = ["Arm Cannon", "Aura Blast", "Aura Serpent", "Bombardment", "Chaos Blades", "Colossal Blade", "Colossal Hammer", "Corruption",
                    "Crimson Vortex", "Dark Flames", "Djinn Inferno", "Icicle Crash", "Infernal Flames", "Lightwall", "Plasma Geyser", "Storm Eye"]
-    armors = ["Advisor Robe", "Copper Breastplate", "Dragoon Armor", "Empress Robe", "Eternal Coat", "Lab Coat", "Leather Jerkin", "Librarian Robe",
+    armor = ["Advisor Robe", "Copper Breastplate", "Dragoon Armor", "Empress Robe", "Eternal Coat", "Lab Coat", "Leather Jerkin", "Librarian Robe",
                    "Midnight Cloak", "Military Armor", "Old Coat", "Princess Dress", "Security Vest", "Travellers Cloak", "Trendy Jacket"]
     headgear = ["Advisor Hat", "Buckle Hat", "Captains Helmet", "Combat Helmet", "Copper Helmet", "Dragoon Helmet", "Empire Crown", "Engineer Goggles",
                      "Eternal Crown", "Lab Glasses", "Leather Helmet", "Librarian Hat", "Pointy Hat", "Security Visor", "Sunglasses", "Viletian Crown"]
@@ -69,8 +69,8 @@ class BingoBoard(tkinter.Frame):
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if self.settings.armors["value"]:
-            for item in self.settings.armors["items"]:
+        if self.settings.armor["value"]:
+            for item in self.settings.armor["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 

@@ -76,7 +76,7 @@ class TimespinnerBingo(tkinter.Frame):
             master=self.master,
             text="Rows: " + str(self.availableIcons),
             width=5,
-            values = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
+            values = ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
             )
         self.cbRows.current(self.settings.rows["value"])
         self.cbRows.bind("<<ComboboxSelected>>", lambda x:self.rowsChanged())
@@ -93,7 +93,7 @@ class TimespinnerBingo(tkinter.Frame):
             master=self.master,
             text="Columns: " + str(self.availableIcons),
             width=5,
-            values = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
+            values = ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
             )
         self.cbColumns.current(self.settings.columns["value"])
         self.cbColumns.bind("<<ComboboxSelected>>", lambda x:self.columnsChanged())
@@ -113,7 +113,7 @@ class TimespinnerBingo(tkinter.Frame):
         
         widget = tkinter.Label(
             master=self.master,
-            text="Available Icons :"
+            text="Available Items :"
             )
         widget.grid(row=6, column=2, padx=(10, 0), sticky="e")
 
@@ -125,7 +125,7 @@ class TimespinnerBingo(tkinter.Frame):
 
         widget = tkinter.Label(
             master=self.master,
-            text="Required Icons :"
+            text="Required Items :"
             )
         widget.grid(row=7, column=2, padx=(10, 0), sticky="e")
 

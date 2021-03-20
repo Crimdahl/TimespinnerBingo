@@ -8,7 +8,7 @@ if getattr(sys, "frozen", False):
 elif __file__:
     SETTINGS_PATH = os.path.join(os.path.dirname(__file__), "settings.txt")
 #SETTINGSLIST = ["consumables", "questItems", "relics", "orbs", "passives", "spells",
-#                "armors", "headgear", "useTrinkets", "useKeycards", "useFamiliars", "useMiscellaneous",
+#                "armor", "headgear", "useTrinkets", "useKeycards", "useFamiliars", "useMiscellaneous",
 #                "useCompactMode", "allowDuplicates", "rows", "columns"]
 
 class Settings(object):
@@ -29,7 +29,7 @@ class Settings(object):
                      "Scythe Ring", "Shadow Seal", "Shield Ring", "Silence Ring", "Star of Lachiem", "Sun Ring", "Tailwind Ring"]} 
         self.spells = {"friendlyName":"Use Spells", "settingtype": "item", "value":True, "items":["Arm Cannon", "Aura Blast", "Aura Serpent", "Bombardment", "Chaos Blades", "Colossal Blade", "Colossal Hammer", "Corruption",
                    "Crimson Vortex", "Dark Flames", "Djinn Inferno", "Icicle Crash", "Infernal Flames", "Lightwall", "Plasma Geyser", "Storm Eye"]}
-        self.armors = {"friendlyName":"Use Armors", "settingtype": "item", "value":True, "items":["Advisor Robe", "Copper Breastplate", "Dragoon Armor", "Empress Robe", "Eternal Coat", "Lab Coat", "Leather Jerkin", "Librarian Robe",
+        self.armor = {"friendlyName":"Use Armor", "settingtype": "item", "value":True, "items":["Advisor Robe", "Copper Breastplate", "Dragoon Armor", "Empress Robe", "Eternal Coat", "Lab Coat", "Leather Jerkin", "Librarian Robe",
                    "Midnight Cloak", "Military Armor", "Old Coat", "Princess Dress", "Security Vest", "Travellers Cloak", "Trendy Jacket"]}
         self.headgear = {"friendlyName":"Use Headgear", "settingtype": "item", "value":True, "items":["Advisor Hat", "Buckle Hat", "Captains Helmet", "Combat Helmet", "Copper Helmet", "Dragoon Helmet", "Empire Crown", "Engineer Goggles",
                      "Eternal Crown", "Lab Glasses", "Leather Helmet", "Librarian Hat", "Pointy Hat", "Security Visor", "Sunglasses", "Viletian Crown"]} 
@@ -146,15 +146,15 @@ class Settings(object):
         return
 
     #Getter
-    def useArmors(self):
-        return self.armors["value"]
+    def useArmor(self):
+        return self.armor["value"]
 
     #Setter
-    def setArmors(self, arg):
+    def setArmor(self, arg):
         if type(arg) is bool:
-            self.armors["value"] = arg
+            self.armor["value"] = arg
         else:
-            raise TypeError("Bad argument passed to the armors setter.")
+            raise TypeError("Bad argument passed to the armor setter.")
         return
 
     #Getter

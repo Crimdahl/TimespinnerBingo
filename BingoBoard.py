@@ -15,110 +15,74 @@ class BingoBoard(tkinter.Frame):
         if self.settings.consumables["value"]:
             for item in self.settings.consumables["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
 
         if self.settings.questItems["value"]:
             for item in self.settings.questItems["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
                    
         if self.settings.relics["value"]:
             for item in self.settings.relics["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
 
         if self.settings.orbs["value"]:
             for item in self.settings.orbs["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
 
         if self.settings.passives["value"]:
             for item in self.settings.passives["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
                    
         if self.settings.spells["value"]:
             for item in self.settings.spells["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
 
         if self.settings.armor["value"]:
             for item in self.settings.armor["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
 
         if self.settings.headgear["value"]:
             for item in self.settings.headgear["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
                    
         if self.settings.trinkets["value"]:
             for item in self.settings.trinkets["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
 
         if self.settings.keycards["value"]:
             for item in self.settings.keycards["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
 
         if self.settings.familiars["value"]:
             for item in self.settings.familiars["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
 
         if self.settings.miscellaneous["value"]:
             for item in self.settings.miscellaneous["items"]:
                 if item not in self.icons.keys():
-                    print(str(index))
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                     index += 1
-                else:
-                    print("Item already in list. Skipped.")
         
         for c in range(int(self.settings.columns["value"])):
             for r in range(int(self.settings.rows["value"])):
@@ -126,7 +90,6 @@ class BingoBoard(tkinter.Frame):
                     self.master
                 )
                 frame.grid(row=r, column=c, padx=2, pady=2)
-                print(str(len(self.icons.keys())))
                 randomkey = random.choice(list(self.icons.keys()))
                 if self.settings.allowDuplicates["value"]:
                     icon = self.icons.get(randomkey)

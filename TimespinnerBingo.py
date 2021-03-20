@@ -88,7 +88,6 @@ class TimespinnerBingo(tkinter.Frame):
             width=5,
             values = ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
             )
-        print(self.settings.columns["value"])
         self.cbColumns.current(int(self.settings.columns["value"]) - 1)
         self.cbColumns.bind("<<ComboboxSelected>>", lambda x:self.columnsChanged())
         self.cbColumns.grid(row=3, column=3, padx=(0, 10), sticky="w")
@@ -189,21 +188,18 @@ class TimespinnerBingo(tkinter.Frame):
         return
 
     def rowsChanged(self):
-        print("Saving rows:" + self.cbRows.get())
         self.settings.setRows(int(self.cbRows.get()))
         self.settings.Save()
         self.calculateRequiredIcons()
         self.validateRequiredIcons()
 
     def columnsChanged(self):
-        print("Saving columns:" + self.cbColumns.get())
         self.settings.setColumns(int(self.cbColumns.get()))
         self.settings.Save()
         self.calculateRequiredIcons()
         self.validateRequiredIcons()
 
     def validateRequiredIcons(self):
-        print(str(self.settings.allowDuplicates["value"]))
         if not self.settings.allowDuplicates["value"]:
             if int(self.lblAvailableIcons["text"]) - int(self.lblRequiredIcons["text"]) < 0:
                 self.btnGenerate["state"] = tkinter.DISABLED
@@ -218,7 +214,7 @@ class TimespinnerBingo(tkinter.Frame):
 
     def generateBingoBoard(self):
         newWindow = tkinter.Toplevel(root)
-        newWindow.title("Bingo")
+        newWindow.title("Timespinner Bingo")
         BingoBoard.BingoBoard(newWindow, self.settings)
         return
 

@@ -2,7 +2,7 @@ import tkinter
 import os
 import random
 
-class BingoBoard(object):
+class BingoBoard(tkinter.Frame):
     iconDirectory = os.path.join(os.path.dirname(__file__), "Icons")
     consumables = ["Antidote", "Berry Pick-Mi-Up", "Berry Pick-Mi-Up Plus", "Biscuit", "Chaos Rose", "Cheveur Breast", "Cheveur Drumstick",
                         "Dream Wisp", "Eel Meat", "Empress Cake", "Ether", "Filigree Tea", "Hi-Ether", "Hi-Potion", "Jerky", "Mind Refresh Ultra",
@@ -29,81 +29,88 @@ class BingoBoard(object):
     familiars = ["Demon", "Griffin", "Kobo", "Merchant Crow", "Meyef", "Sprite"]
     miscellaneous = ["Aura Up", "Elemental Beads", "Essence Crystal", "Gold Necklace", "Gold Ring", "Health Up", "Herb", "Sand Up", "Shiny Rock"]
 
-    def __init__(self, useConsumables = True, useQuestItems = True, 
-                 useRelics = True, useOrbs = True, usePassives = True, 
-                 useSpells = True, useArmors = True, useHeadgear = True, 
-                 useTrinkets = True, useKeycards = True, useMiscellaneous = True,
-                 useFamiliars = True, compactMode = False, rows = 5, columns = 5):
-        self.root = tkinter.Tk()
-        self.rows = rows
-        self.columns = columns
+    def __init__(self, master, settings):
+                 #,useConsumables = True, useQuestItems = True, 
+                 #useRelics = True, useOrbs = True, usePassives = True, 
+                 #useSpells = True, useArmors = True, useHeadgear = True, 
+                 #useTrinkets = True, useKeycards = True, useMiscellaneous = True,
+                 #useFamiliars = True, compactMode = False, allowDuplicates = True,
+                 #rows = 5, columns = 5
+        #self.rows = rows
+        #self.columns = columns
+        self.master = master
         self.icons = {}
         self.tooltips = []
 
-        if useQuestItems:
-            for item in self.quest_items:
+        self.settings = settings
+
+        if self.settings.questItems["value"]:
+            for item in self.settings.questItems["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                    
-        if useRelics:
-            for item in self.relics:
+        if self.settings.relics["value"]:
+            for item in self.settings.relics["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if useOrbs:
-            for item in self.orbs:
+        if self.settings.orbs["value"]:
+            for item in self.settings.orbs["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if usePassives:
-            for item in self.passives:
+        if self.settings.passives["value"]:
+            for item in self.settings.passives["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                    
-        if useSpells:
-            for item in self.spells:
+        if self.settings.spells["value"]:
+            for item in self.settings.spells["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if useArmors:
-            for item in self.armors:
+        if self.settings.armors["value"]:
+            for item in self.settings.armors["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if useHeadgear:
-            for item in self.headgear:
+        if self.settings.headgear["value"]:
+            for item in self.settings.headgear["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                    
-        if useTrinkets:
-            for item in self.trinkets:
+        if self.settings.trinkets["value"]:
+            for item in self.settings.trinkets["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if useKeycards:
-            for item in self.keycards:
+        if self.settings.keycards["value"]:
+            for item in self.settings.keycards["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if useFamiliars:
-            for item in self.familiars:
+        if self.settings.familiars["value"]:
+            for item in self.settings.familiars["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if useMiscellaneous:
-            for item in self.miscellaneous:
+        if self.settings.miscellaneous["value"]:
+            for item in self.settings.miscellaneous["items"]:
                 if item not in self.icons.keys():
                     self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-
-        for c in range(self.columns):
-            for r in range(self.rows):
+        
+        for c in range(int(self.settings.columns["value"])):
+            for r in range(int(self.settings.rows["value"])):
                 frame = tkinter.Frame(
-                    master = self.root
+                    self.master
                 )
                 frame.grid(row=r, column=c, padx=2, pady=2)
                 randomkey = random.choice(list(self.icons.keys()))
-                icon = self.icons.pop(randomkey)
-                if compactMode:
+                if self.settings.allowDuplicates:
+                    icon = self.icons.get(randomkey)
+                else:
+                    icon = self.icons.pop(randomkey)
+                if self.settings.useCompactMode["value"]:
                     button = tkinter.Button(
                         master = frame,
                         image = icon,
@@ -115,9 +122,9 @@ class BingoBoard(object):
                 else:
                     button = tkinter.Button(
                         master = frame,
-                        text = randomkey,
+                        text = randomkey[:6] + randomkey[6:12].replace(" ", "\n", 1) + randomkey[12:],
                         image = icon,
-                        width = icon.width() * 3.5,
+                        width = icon.width() * 2.5,
                         height = icon.height() * 2,
                         compound = tkinter.BOTTOM,
                         bg = "white"

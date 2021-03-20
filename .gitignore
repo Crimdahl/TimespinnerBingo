@@ -128,3 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .vs/TimespinnerBingo/v16/.suo
+settings.txt

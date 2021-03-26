@@ -2,6 +2,7 @@ import os
 import json
 import codecs
 import sys
+from tkinter import messagebox
 
 if getattr(sys, "frozen", False):
     SETTINGS_PATH = os.path.join(os.path.dirname(sys.executable), "settings.txt")
@@ -11,6 +12,7 @@ elif __file__:
 class Settings(object):
     def __init__(self):
         #Apply default settings
+        self.SETTINGS_VERSION = "1.1.0"
         self.consumables = {"friendlyName":"Use Consumables", "settingtype": "item", "value":True, "items":["Antidote", "Berry Pick-Mi-Up", "Berry Pick-Mi-Up+", "Biscuit", "Chaos Rose", "Cheveur Breast", "Cheveur Drumstick",
                         "Dream Wisp", "Eel Meat", "Empress Cake", "Ether", "Filigree Tea", "Hi-Ether", "Hi-Potion", "Jerky", "Mind Refresh Ultra",
                         "Mind Refresh", "Mushroom", "Orange Juice", "Plump Maggot", "Potion", "Rotten Tail", "Sand Bottle", "Sand Vial",
@@ -34,6 +36,7 @@ class Settings(object):
                      "Gilded Egg", "Glass Pumpkin", "Metal Wristband", "Mother of Pearl", "Nymph Hairband", "Pendulum", "Selens Bangle", "Synthetic Plume"]}
         self.keycards = {"friendlyName":"Use Keycards", "settingtype": "item", "value":True, "items":["Elevator Keycard", "Keycard A", "Keycard B", "Keycard C", "Keycard D", "Keycard V"]}
         self.familiars = {"friendlyName":"Use Familiars", "settingtype": "item", "value":True, "items":["Demon", "Griffin", "Kobo", "Merchant Crow", "Meyef", "Sprite"]}
+        self.bosses = {"friendlyName":"Use Bosses", "settingtype": "item", "value":True, "items":["Boots", "Idol", "Aelana", "Maw", "Genza", "Daddy", "Vol", "Xarion", "Nightmare"]}
         self.miscellaneous = {"friendlyName":"Use Miscellaneous", "settingtype": "item", "value":True, "items":["Aura Up", "Elemental Beads", "Essence Crystal", "Gold Necklace", "Gold Ring", "Health Up", "Herb", "Sand Up", "Shiny Rock"]}
         self.useCompactMode = {"friendlyName":"Use Compact Mode", "settingtype": "generation", "value":False}
         self.allowDuplicates = {"friendlyName":"Allow Duplicates", "settingtype": "generation", "value":False}
@@ -45,10 +48,17 @@ class Settings(object):
             #Load settings from file
             try:
                 with codecs.open(SETTINGS_PATH, encoding="utf-8-sig", mode="r") as f:
-                        newSettings = json.load(f)
-                for k, v in newSettings.items():
-                    #if k not in self.__dict__.keys():
-                    self.__dict__[k] = v
+                    newSettings = json.load(f)
+                    if "SETTINGS_VERSION" in newSettings.keys() and newSettings["SETTINGS_VERSION"] == self.SETTINGS_VERSION:
+                        self.__dict__ = newSettings
+                    else:
+                        messagebox.showerror("Notice", "A settings file from a different version of TimespinnerBingo has been detected - your settings may be reset.")
+                #for k, v in newSettings.items():
+                #    if "version" in k and newSettings["version"] == self.version:
+                #        self.__dict__[k] = v
+                #    else:
+                #        messagebox.showerror("Notice", "An incompatible settings file has been detected - your settings may be reset.")
+                #        break
             except:
                 print("Handled error loading settings from file.")
         

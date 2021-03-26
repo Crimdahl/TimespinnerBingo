@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 .vs/TimespinnerBingo/v16/.suo
 settings.txt
+Settings.py

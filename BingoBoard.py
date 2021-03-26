@@ -11,78 +11,97 @@ class BingoBoard(tkinter.Frame):
         self.tooltips = []
 
         self.settings = settings
-        index = 1
-        if self.settings.consumables["value"]:
-            for item in self.settings.consumables["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
 
-        if self.settings.questItems["value"]:
-            for item in self.settings.questItems["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
+        #Iterate over dictionaries in settings, making images out of the enabled lists of items
+        for k, v in self.settings.__dict__.items():
+            if type(v) is dict:
+                if v["settingtype"] == "item" and v["value"]:
+                    for item in v["items"]:
+                        image = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png"))
+                        assert image.height() == image.width(), "Supplied icons should be square in shape, 16x16, 32x32, 64x64, or 128x128."
+                        if image.height() == 16:
+                            self.icons[item] = image.zoom(2)
+                        elif image.height() == 32:
+                            self.icons[item] = image
+                        elif image.height() == 64:
+                            self.icons[item] = image.subsample(2)
+                        elif image.height() == 128:
+                            self.icons[item] = image.subsample(4)
+
+
+        #if self.settings.consumables["value"]:
+        #    for item in self.settings.consumables["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
+
+        #if self.settings.questItems["value"]:
+        #    for item in self.settings.questItems["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                    
-        if self.settings.relics["value"]:
-            for item in self.settings.relics["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
+        #if self.settings.relics["value"]:
+        #    for item in self.settings.relics["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if self.settings.orbs["value"]:
-            for item in self.settings.orbs["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
+        #if self.settings.orbs["value"]:
+        #    for item in self.settings.orbs["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if self.settings.passives["value"]:
-            for item in self.settings.passives["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
+        #if self.settings.passives["value"]:
+        #    for item in self.settings.passives["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                    
-        if self.settings.spells["value"]:
-            for item in self.settings.spells["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
+        #if self.settings.spells["value"]:
+        #    for item in self.settings.spells["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if self.settings.armor["value"]:
-            for item in self.settings.armor["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
+        #if self.settings.armor["value"]:
+        #    for item in self.settings.armor["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if self.settings.headgear["value"]:
-            for item in self.settings.headgear["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
+        #if self.settings.headgear["value"]:
+        #    for item in self.settings.headgear["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
                    
-        if self.settings.trinkets["value"]:
-            for item in self.settings.trinkets["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
+        #if self.settings.trinkets["value"]:
+        #    for item in self.settings.trinkets["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if self.settings.keycards["value"]:
-            for item in self.settings.keycards["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
+        #if self.settings.keycards["value"]:
+        #    for item in self.settings.keycards["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if self.settings.familiars["value"]:
-            for item in self.settings.familiars["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
+        #if self.settings.familiars["value"]:
+        #    for item in self.settings.familiars["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
 
-        if self.settings.miscellaneous["value"]:
-            for item in self.settings.miscellaneous["items"]:
-                if item not in self.icons.keys():
-                    self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                    index += 1
+        #if self.settings.bosses["value"]:
+        #    for item in self.settings.bosses["items"]:
+        #        if item not in self.icons.keys():
+        #            image = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png"))
+        #            if image.height() == 16:
+        #                self.icons[item] = image.zoom(2)
+        #            elif image.height() == 32:
+        #                self.icons[item] = image
+        #            elif image.height() == 64:
+        #                self.icons[item] = image.subsample(2)
+        #            elif image.height() == 128:
+        #                self.icons[item] = image.subsample(4)
+        #            #self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
+
+        #if self.settings.miscellaneous["value"]:
+        #    for item in self.settings.miscellaneous["items"]:
+        #        if item not in self.icons.keys():
+        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
         
         for c in range(int(self.settings.columns["value"])):
             for r in range(int(self.settings.rows["value"])):

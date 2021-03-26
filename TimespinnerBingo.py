@@ -147,10 +147,9 @@ class TimespinnerBingo(tkinter.Frame):
                     )
         self.btnGenerate.grid(row=15, column=2, columnspan=2, pady=(0, 10), padx=(10, 0), sticky="w")
 
-        if self.settings.allowDuplicates["value"]:
+        self.calculateAvailableIcons()
+        if self.availableIcons > 0 and self.settings.allowDuplicates["value"]:
             self.lblAvailableIcons["text"] = "Infinite"
-        else:
-            self.calculateAvailableIcons()
         self.calculateRequiredIcons() 
         self.validateRequiredIcons()
         
@@ -164,7 +163,6 @@ class TimespinnerBingo(tkinter.Frame):
                         items.add(item)
         self.availableIcons += len(items)
         self.lblAvailableIcons["text"] = text=str(self.availableIcons)
-        self.validateRequiredIcons()
 
     def calculateRequiredIcons(self):
         self.requiredIcons = int(self.cbRows.get()) * int(self.cbColumns.get())
@@ -180,11 +178,10 @@ class TimespinnerBingo(tkinter.Frame):
                     else:
                         v["value"] = False
         self.settings.Save()
-        if self.settings.allowDuplicates["value"]:
+        self.calculateAvailableIcons()
+        if self.availableIcons > 0 and self.settings.allowDuplicates["value"]:
             self.lblAvailableIcons["text"] = "Infinite"
-            self.validateRequiredIcons()
-        else:
-            self.calculateAvailableIcons()
+        self.validateRequiredIcons()
         return
 
     def rowsChanged(self):
@@ -201,15 +198,18 @@ class TimespinnerBingo(tkinter.Frame):
 
     def validateRequiredIcons(self):
         if not self.settings.allowDuplicates["value"]:
-            if int(self.lblAvailableIcons["text"]) - int(self.lblRequiredIcons["text"]) < 0:
+            if self.availableIcons - self.requiredIcons < 0:
                 self.btnGenerate["state"] = tkinter.DISABLED
-                self.lblRequiredIcons["fg"] = "Red"
+                self.lblAvailableIcons["fg"] = "Red"
             else:
                 self.btnGenerate["state"] = tkinter.NORMAL
-                self.lblRequiredIcons["fg"] = "Black"
+                self.lblAvailableIcons["fg"] = "Black"
+        elif self.availableIcons == 0:
+            self.btnGenerate["state"] = tkinter.DISABLED
+            self.lblAvailableIcons["fg"] = "Red"
         else:
             self.btnGenerate["state"] = tkinter.NORMAL
-            self.lblRequiredIcons["fg"] = "Black"
+            self.lblAvailableIcons["fg"] = "Black"
         return
 
     def generateBingoBoard(self):

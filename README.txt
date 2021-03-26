@@ -1,5 +1,5 @@
 Timespinner Bingo Program
-Version: 1.0.1
+Version: 1.1.1
 Date:	 March 20, 2021
 URL:	 https://github.com/Crimdahl/TimespinnerBingo
 

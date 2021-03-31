@@ -76,7 +76,10 @@ class ButtonEvents(object):
         self.clicked = False
         
     def click(self, event):
-        self.clicked = True
+        if self.clicked:
+            self.clicked = False
+        else:
+            self.clicked = True
 
     def enter(self, event=None):
         self.schedule()
@@ -110,7 +113,10 @@ class ButtonEvents(object):
         x = y = 0
         x, y, cx, cy = self.widget.bbox("insert")
         x += self.widget.winfo_rootx()
-        y += self.widget.winfo_rooty() - (self.widget.winfo_height() / 2)
+        if self.widget["text"] == "":
+            y += self.widget.winfo_rooty() - (self.widget.winfo_height() / 2)
+        else:
+            y += self.widget.winfo_rooty() - (self.widget.winfo_height() / 4)
         # creates a toplevel window
         self.tw = tkinter.Toplevel(self.widget)
         # Leaves only the label and removes the app window

@@ -8,7 +8,7 @@ class BingoBoard(tkinter.Frame):
     def __init__(self, master, settings):
         self.master = master
         self.icons = {}
-        self.tooltips = []
+        self.buttonevents = []
 
         self.settings = settings
 
@@ -28,81 +28,6 @@ class BingoBoard(tkinter.Frame):
                         elif image.height() == 128:
                             self.icons[item] = image.subsample(4)
 
-
-        #if self.settings.consumables["value"]:
-        #    for item in self.settings.consumables["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-
-        #if self.settings.questItems["value"]:
-        #    for item in self.settings.questItems["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                   
-        #if self.settings.relics["value"]:
-        #    for item in self.settings.relics["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-
-        #if self.settings.orbs["value"]:
-        #    for item in self.settings.orbs["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-
-        #if self.settings.passives["value"]:
-        #    for item in self.settings.passives["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                   
-        #if self.settings.spells["value"]:
-        #    for item in self.settings.spells["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-
-        #if self.settings.armor["value"]:
-        #    for item in self.settings.armor["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-
-        #if self.settings.headgear["value"]:
-        #    for item in self.settings.headgear["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-                   
-        #if self.settings.trinkets["value"]:
-        #    for item in self.settings.trinkets["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-
-        #if self.settings.keycards["value"]:
-        #    for item in self.settings.keycards["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-
-        #if self.settings.familiars["value"]:
-        #    for item in self.settings.familiars["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-
-        #if self.settings.bosses["value"]:
-        #    for item in self.settings.bosses["items"]:
-        #        if item not in self.icons.keys():
-        #            image = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png"))
-        #            if image.height() == 16:
-        #                self.icons[item] = image.zoom(2)
-        #            elif image.height() == 32:
-        #                self.icons[item] = image
-        #            elif image.height() == 64:
-        #                self.icons[item] = image.subsample(2)
-        #            elif image.height() == 128:
-        #                self.icons[item] = image.subsample(4)
-        #            #self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-
-        #if self.settings.miscellaneous["value"]:
-        #    for item in self.settings.miscellaneous["items"]:
-        #        if item not in self.icons.keys():
-        #            self.icons[item] = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png")).zoom(2)
-        
         for c in range(int(self.settings.columns["value"])):
             for r in range(int(self.settings.rows["value"])):
                 frame = tkinter.Frame(
@@ -133,19 +58,11 @@ class BingoBoard(tkinter.Frame):
                         compound = tkinter.BOTTOM,
                         bg = "white"
                     )
-                button.config(command = lambda arg=button:buttonClick(arg))
-                self.tooltips.append(ToolTip(button, randomkey))
+                self.buttonevents.append(ButtonEvents(button, randomkey))
                 button.image = icon
                 button.pack()
-
-        #Button click event handler
-        def buttonClick(arg):
-            if arg["bg"] == "white":
-                arg["bg"] = "green"
-            elif arg["bg"] == "green":
-                arg["bg"] = "white"
     
-class ToolTip(object):
+class ButtonEvents(object):
     def __init__(self, widget, text="widget info"):
         self.waittime = 0
         self.wraplength = 180
@@ -153,16 +70,31 @@ class ToolTip(object):
         self.text = text
         self.widget.bind("<Enter>", self.enter)
         self.widget.bind("<Leave>", self.leave)
-        self.widget.bind("<ButtonPress>", self.leave)
+        self.widget.bind("<ButtonPress>", self.click)
         self.id = None
         self.tw = None
+        self.clicked = False
+        
+    def click(self, event):
+        self.clicked = True
 
     def enter(self, event=None):
         self.schedule()
+        if self.widget["bg"] == "white":
+            self.widget["bg"] = "green"
+        elif self.widget["bg"] == "green":
+            self.widget["bg"] = "white"
 
     def leave(self, event=None):
         self.unschedule()
         self.hidetip()
+        if not self.clicked:
+            if self.widget["bg"] == "white":
+                self.widget["bg"] = "green"
+            elif self.widget["bg"] == "green":
+                self.widget["bg"] = "white"
+        else:
+            self.clicked = False
 
     def schedule(self):
         self.unschedule()

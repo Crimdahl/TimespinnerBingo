@@ -20,6 +20,7 @@ class BingoBoard(tkinter.Frame):
                         if settings.excludeMeyef["value"] and item == "Meyef": continue
                         if settings.excludeJewelryBox["value"] and item == "Jewelry Box": continue
                         if settings.excludeTalariaAttachment["value"] and item == "Talaria Attachment": continue
+                        if settings.excludeKickstarterItems["value"] and (item == "Wyrm Brooch" or item == "Greed Brooch" or item == "Umbra Orb"): continue
                         image = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png"))
                         assert image.height() == image.width(), "Supplied icons should be square in shape, 16x16, 32x32, 64x64, or 128x128."
                         if image.height() == 16:

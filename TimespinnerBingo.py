@@ -74,7 +74,7 @@ class TimespinnerBingo(tkinter.Frame):
         #
         widget = tkinter.Label(
             master=self.master,
-            text="Flag-related Settings"
+            text="Exclusions"
             )
         widget.grid(row=0, column=2, columnspan=2, pady=(10,0), sticky="s")
 
@@ -82,7 +82,7 @@ class TimespinnerBingo(tkinter.Frame):
         flag_index = 2
         for k, v in self.settings.__dict__.items():
             if type(v) is dict:
-                if v["settingtype"] == "flag":
+                if v["settingtype"] == "exclusion":
                     var = tkinter.IntVar()
                     widget = tkinter.Checkbutton(
                         master=self.master,
@@ -211,6 +211,7 @@ class TimespinnerBingo(tkinter.Frame):
                         if self.settings.excludeMeyef["value"] and item == "Meyef": continue
                         if self.settings.excludeJewelryBox["value"] and item == "Jewelry Box": continue
                         if self.settings.excludeTalariaAttachment["value"] and item == "Talaria Attachment": continue
+                        if self.settings.excludeKickstarterItems["value"] and (item == "Wyrm Brooch" or item == "Greed Brooch" or item == "Umbra Orb"): continue
                         items.add(item)
 
         self.availableIcons += len(items)

@@ -12,7 +12,7 @@ elif __file__:
 class Settings(object):
     def __init__(self):
         #Apply default settings
-        self.SETTINGS_VERSION = "1.2.0"
+        self.SETTINGS_VERSION = "1.2.1"
         self.consumables = {"friendlyName":"Use Consumables", "settingtype": "item", "value":True, "items":["Antidote", "Berry Pick-Mi-Up", "Berry Pick-Mi-Up+", "Biscuit", "Chaos Rose", "Cheveur Breast", "Cheveur Drumstick",
                         "Dream Wisp", "Eel Meat", "Empress Cake", "Ether", "Filigree Tea", "Hi-Ether", "Hi-Potion", "Jerky", "Mind Refresh Ultra",
                         "Mind Refresh", "Mushroom", "Orange Juice", "Plump Maggot", "Potion", "Rotten Tail", "Sand Bottle", "Sand Vial",
@@ -38,9 +38,10 @@ class Settings(object):
         self.familiars = {"friendlyName":"Use Familiars", "settingtype": "item", "value":True, "items":["Demon", "Griffin", "Kobo", "Merchant Crow", "Meyef", "Sprite"]}
         self.bosses = {"friendlyName":"Use Bosses", "settingtype": "item", "value":True, "items":["Boots", "Idol", "Aelana", "Maw", "Genza", "Daddy", "Vol", "Xarion", "Nightmare"]}
         self.miscellaneous = {"friendlyName":"Use Miscellaneous", "settingtype": "item", "value":True, "items":["Aura Up", "Elemental Beads", "Essence Crystal", "Gold Necklace", "Gold Ring", "Health Up", "Herb", "Sand Up", "Shiny Rock"]}
-        self.excludeMeyef = {"friendlyName":"Exclude Meyef", "settingtype": "flag", "value":False}
-        self.excludeJewelryBox = {"friendlyName":"Exclude Jewelry Box", "settingtype": "flag", "value":False}
-        self.excludeTalariaAttachment = {"friendlyName":"Exclude Talaria Attachment", "settingtype": "flag", "value":False}
+        self.excludeMeyef = {"friendlyName":"Exclude Meyef", "settingtype": "exclusion", "value":False}
+        self.excludeJewelryBox = {"friendlyName":"Exclude Jewelry Box", "settingtype": "exclusion", "value":False}
+        self.excludeTalariaAttachment = {"friendlyName":"Exclude Talaria Attachment", "settingtype": "exclusion", "value":False}
+        self.excludeKickstarterItems = {"friendlyName":"Exclude Kickstarter-exclusive Items", "settingtype": "exclusion", "value":False}
         self.useCompactMode = {"friendlyName":"Use Compact Mode", "settingtype": "generation", "value":False}
         self.allowDuplicates = {"friendlyName":"Allow Duplicates", "settingtype": "generation", "value":False}
         self.rows = {"friendlyName":"Number of Rows", "settingtype": "generation", "value":5}

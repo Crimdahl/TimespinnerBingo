@@ -17,6 +17,9 @@ class BingoBoard(tkinter.Frame):
             if type(v) is dict:
                 if v["settingtype"] == "item" and v["value"]:
                     for item in v["items"]:
+                        if settings.excludeMeyef["value"] and item == "Meyef": continue
+                        if settings.excludeJewelryBox["value"] and item == "Jewelry Box": continue
+                        if settings.excludeTalariaAttachment["value"] and item == "Talaria Attachment": continue
                         image = tkinter.PhotoImage(file = os.path.join(self.iconDirectory, item + ".png"))
                         assert image.height() == image.width(), "Supplied icons should be square in shape, 16x16, 32x32, 64x64, or 128x128."
                         if image.height() == 16:

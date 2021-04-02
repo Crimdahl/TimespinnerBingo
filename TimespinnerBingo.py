@@ -206,9 +206,13 @@ class TimespinnerBingo(tkinter.Frame):
         items = set()
         for k, v in self.settings.__dict__.items():
             if type(v) is dict:
-                if v["value"] and "items" in v:
+                if v["settingtype"] == "item" and v["value"]:
                     for item in v["items"]:
+                        if self.settings.excludeMeyef["value"] and item == "Meyef": continue
+                        if self.settings.excludeJewelryBox["value"] and item == "Jewelry Box": continue
+                        if self.settings.excludeTalariaAttachment["value"] and item == "Talaria Attachment": continue
                         items.add(item)
+
         self.availableIcons += len(items)
         self.lblAvailableIcons["text"] = text=str(self.availableIcons)
 

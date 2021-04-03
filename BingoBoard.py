@@ -42,27 +42,31 @@ class BingoBoard(tkinter.Frame):
                         elif image.height() == 128:
                             self.icons[item] = image.subsample(4)
 
-        widget = tkinter.Label(
-            master = self.master,
-            text = "Search"
-            )
-        widget.grid(row=0, column=0, columnspan=2, padx=(2,2), sticky="w")
+        if self.settings.columns["value"] > 3:
+            widget = tkinter.Label(
+                master = self.master,
+                text = "Search"
+                )
+            if self.settings.useCompactMode["value"]:
+                widget.grid(row=0, column=0, columnspan=2, padx=(2,2), sticky="w")
+            else:
+                widget.grid(row=0, column=0, padx=(2,2), sticky="e")
 
-        widget = CustomText(
-            master = self.master,
-            height = 1,
-            width = 0
-            )
-        widget.bind("<<TextModified>>", self.searchBoxModified)
-        widget.grid(row=0, column=1, columnspan=self.settings.columns["value"] - 3, sticky="ew")
+            widget = CustomText(
+                master = self.master,
+                height = 1,
+                width = 0
+                )
+            widget.bind("<<TextModified>>", self.searchBoxModified)
+            widget.grid(row=0, column=1, columnspan=self.settings.columns["value"] - 2, sticky="ew")
 
-        self.btnGenerate = tkinter.Button(
-                        master = self.master,
-                        compound = tkinter.BOTTOM,
-                        text="Mark",
-                        command=self.toggleButtons
-                    )
-        self.btnGenerate.grid(row=0, column=self.settings.columns["value"] - 2, columnspan=2, padx=(2, 2), sticky="ew")
+            widget = tkinter.Button(
+                            master = self.master,
+                            compound = tkinter.BOTTOM,
+                            text="Mark",
+                            command=self.toggleButtons
+                        )
+            widget.grid(row=0, column=self.settings.columns["value"] - 1, columnspan=2, padx=(2, 2), sticky="ew")
 
         for c in range(int(self.settings.columns["value"])):
             for r in range(1, int(self.settings.rows["value"]) + 1):

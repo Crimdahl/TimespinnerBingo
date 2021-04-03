@@ -12,7 +12,7 @@ elif __file__:
 class Settings(object):
     def __init__(self):
         #Apply default settings
-        self.SETTINGS_VERSION = "1.2.1"
+        self.SETTINGS_VERSION = "1.2.2"
         self.consumables = {"friendlyName":"Use Consumables", "settingtype": "item", "value":True, "items":["Antidote", "Berry Pick-Mi-Up", "Berry Pick-Mi-Up+", "Biscuit", "Chaos Rose", "Cheveur Breast", "Cheveur Drumstick",
                         "Dream Wisp", "Eel Meat", "Empress Cake", "Ether", "Filigree Tea", "Hi-Ether", "Hi-Potion", "Jerky", "Mind Refresh Ultra",
                         "Mind Refresh", "Mushroom", "Orange Juice", "Plump Maggot", "Potion", "Rotten Tail", "Sand Bottle", "Sand Vial",
@@ -42,6 +42,7 @@ class Settings(object):
         self.excludeJewelryBox = {"friendlyName":"Exclude Jewelry Box", "settingtype": "exclusion", "value":False}
         self.excludeTalariaAttachment = {"friendlyName":"Exclude Talaria Attachment", "settingtype": "exclusion", "value":False}
         self.excludeKickstarterItems = {"friendlyName":"Exclude Kickstarter-exclusive Items", "settingtype": "exclusion", "value":False}
+        self.excludeRareItems = {"friendlyName":"Exclude Rare Items", "settingtype": "exclusion", "value":False}
         self.useCompactMode = {"friendlyName":"Use Compact Mode", "settingtype": "generation", "value":False}
         self.allowDuplicates = {"friendlyName":"Allow Duplicates", "settingtype": "generation", "value":False}
         self.rows = {"friendlyName":"Number of Rows", "settingtype": "generation", "value":5}

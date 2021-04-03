@@ -111,19 +111,19 @@ class TimespinnerBingo(tkinter.Frame):
             master=self.master,
             text="Layout Settings"
             )
-        widget.grid(row=flag_index + 2, column=2, columnspan=2)
+        widget.grid(row=flag_index + 1, column=2, columnspan=2)
 
         widget = ttk.Separator(
             master=self.master,
             orient="horizontal"
             )
-        widget.grid(row=flag_index + 2, column=2, columnspan=2, rowspan=2, sticky="ew")
+        widget.grid(row=flag_index + 1, column=2, columnspan=2, rowspan=2, sticky="ew")
 
         widget = tkinter.Label(
             master=self.master,
             text="Bingo Rows: "
             )
-        widget.grid(row=flag_index + 3, column=2, padx=(10, 0), sticky="w")
+        widget.grid(row=flag_index + 2, column=2, padx=(10, 0), sticky="w")
 
         self.cbRows = ttk.Combobox(
             master=self.master,
@@ -133,13 +133,13 @@ class TimespinnerBingo(tkinter.Frame):
             )
         self.cbRows.current(int(self.settings.rows["value"]) - 1)
         self.cbRows.bind("<<ComboboxSelected>>", lambda x:self.rowsChanged())
-        self.cbRows.grid(row=flag_index + 3, column=3, padx=(0, 10), sticky="ew")
+        self.cbRows.grid(row=flag_index + 2, column=3, padx=(0, 10), sticky="ew")
 
         widget = tkinter.Label(
             master=self.master,
             text="Bingo Columns: "
             )
-        widget.grid(row=flag_index + 4, column=2, padx=(10, 0), sticky="w")
+        widget.grid(row=flag_index + 3, column=2, padx=(10, 0), sticky="w")
 
         self.cbColumns = ttk.Combobox(
             master=self.master,
@@ -149,7 +149,7 @@ class TimespinnerBingo(tkinter.Frame):
             )
         self.cbColumns.current(int(self.settings.columns["value"]) - 1)
         self.cbColumns.bind("<<ComboboxSelected>>", lambda x:self.columnsChanged())
-        self.cbColumns.grid(row=flag_index + 4, column=3, padx=(0, 10), sticky="ew")
+        self.cbColumns.grid(row=flag_index + 3, column=3, padx=(0, 10), sticky="ew")
 
         var = tkinter.BooleanVar()
         widget = tkinter.Checkbutton(
@@ -160,7 +160,7 @@ class TimespinnerBingo(tkinter.Frame):
         if self.settings.useCompactMode["value"]: widget.select()
         widget.config(command = lambda arg=widget:self.checkboxChanged(arg))
         self.variables[widget["text"]] = var
-        widget.grid(row=flag_index + 5, column=2, padx=(10, 0), columnspan=2, sticky="w")
+        widget.grid(row=flag_index + 4, column=2, padx=(10, 0), columnspan=2, sticky="w")
         
         widget = tkinter.Label(
             master=self.master,
@@ -212,6 +212,7 @@ class TimespinnerBingo(tkinter.Frame):
                         if self.settings.excludeJewelryBox["value"] and item == "Jewelry Box": continue
                         if self.settings.excludeTalariaAttachment["value"] and item == "Talaria Attachment": continue
                         if self.settings.excludeKickstarterItems["value"] and (item == "Wyrm Brooch" or item == "Greed Brooch" or item == "Umbra Orb"): continue
+                        if self.settings.excludeRareItems["value"] and (item == "Elemental Beads"): continue
                         items.add(item)
 
         self.availableIcons += len(items)

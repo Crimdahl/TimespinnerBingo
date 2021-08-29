@@ -14,7 +14,7 @@ elif __file__:
 class Settings(object):
     def __init__(self):
         # Apply default settings
-        self.SETTINGS_VERSION = "1.2.2"
+        self.SETTINGS_VERSION = "1.3.0"
         self.consumables = {"friendlyName": "Use Consumables", "settingtype": "item", "value": True,
                             "items": ["Antidote", "Berry Pick-Mi-Up", "Berry Pick-Mi-Up+", "Biscuit", "Chaos Rose",
                                       "Cheveur Breast", "Cheveur Drumstick",

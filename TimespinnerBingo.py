@@ -26,16 +26,16 @@ class TimespinnerBingo(tkinter.Frame):
         # COLUMN 0-1 - icon settings
         #
         # Label at the top of Column 1
-        icon_label = tkinter.Label(master=self.master,
-                               text="Icons")
+        icon_label = tkinter.Label(master=self.master, text="Icons")
         icon_label.grid(row=5, column=0, sticky="s")
 
-        icon_separator = ttk.Separator(
-            master=self.master,
-            orient="horizontal"
-        )
+        icon_separator = ttk.Separator(master=self.master, orient="horizontal")
         icon_separator.grid(row=6, column=0, columnspan=100, sticky="ew")
 
+        # To make a scrollable area containing the checkboxes is pretty complicated.
+        #   We need a Canvas, a Scrollbar, a Frame, checkboxes, and Master.
+        #   The checkboxes are inserted into the frame. The frame is inserted into the Canvas.
+        #   The Canvas and Scrollbar are inserted into Master.
         icon_canvas = tkinter.Canvas(master=self.master)
         icon_canvas_scrollbar = tkinter.Scrollbar(
             master=self.master,
@@ -48,6 +48,8 @@ class TimespinnerBingo(tkinter.Frame):
         def icon_canvas_scroll(event):
             icon_canvas.yview_scroll(-1 * int(event.delta / 120), 'units')
 
+        # Bind the canvas and frame to scroll the canvas whenever the mouse is over them and
+        #   the user scrolls the mouse wheel
         icon_canvas.bind('<MouseWheel>', icon_canvas_scroll)
         icon_container.bind('<MouseWheel>', icon_canvas_scroll)
 
@@ -60,16 +62,24 @@ class TimespinnerBingo(tkinter.Frame):
                 text=string.capwords(key),
                 variable=var
             )
-
+            # Have the checkbox start checked if the item is enabled in config
             if self.config.get_tile_data()[key]['enabled']:
                widget.select()
+            # Add the checkbox to the variable list so the checkbox state can be identified later
             self.variables[widget["text"]] = var
+            # icon_changed is the changelistener that runs when the checkbox is checked
             widget.config(command=lambda arg=widget: self.icon_changed(arg))
+            # We want to bind the mousewheel to scroll the canvas holding the checkbox
+            #   If this is not done, the canvas will not scroll if the mouse is over a checkbox
             widget.bind('<MouseWheel>', icon_canvas_scroll)
+            # Anchoring justifies the checkboxes against the left side
             widget.pack(anchor="w")
             objective_index += 1
 
+        # The Canvas create_window command is required for the scrollbar to work properly
         icon_canvas.create_window(0, 0, anchor='nw', window=icon_container, width=175)
+        # The Canvas update_idletasks waits until the checkboxes are added before configuring the scrollbar
+        #   If this is not done, the scrollbar does not work properly because the Canvas is not full yet?
         icon_canvas.update_idletasks()
         icon_canvas.configure(
             scrollregion=icon_canvas.bbox('all'),
@@ -77,29 +87,21 @@ class TimespinnerBingo(tkinter.Frame):
             width=175
         )
 
+        # Configures the row containing the scrollable canvases to fill the rest of the window vertically
         master.grid_rowconfigure(7, weight=1)
         icon_canvas_scrollbar.grid(row=7, column=1, sticky='nse')
         icon_canvas.grid(row=7, column=0, padx=(5, 0), sticky='ns')
 
-        # layout_settings_separator = ttk.Separator(
-        #     master=self.master,
-        #     orient="horizontal"
-        # )
-        # layout_settings_separator.grid(row=9, column=0, columnspan=7, sticky="ew")
         #
         # COLUMN 2 - Separator
         #
-        col_separator1 = ttk.Separator(
-            master=self.master,
-            orient="vertical"
-        )
+        col_separator1 = ttk.Separator(master=self.master, orient="vertical")
         col_separator1.grid(row=5, column=2, padx=(5, 5), rowspan=3, sticky="ns")
 
         #
         # COLUMN 3-4 - tag settings
         #
-        tag_label = tkinter.Label(master=self.master,
-                                   text="Tags")
+        tag_label = tkinter.Label(master=self.master, text="Tags")
         tag_label.grid(row=5, column=3, sticky="s")
 
         tag_separator = ttk.Separator(
@@ -108,6 +110,10 @@ class TimespinnerBingo(tkinter.Frame):
         )
         tag_separator.grid(row=6, column=3, columnspan=100, sticky="ew")
 
+        # To make a scrollable area containing the checkboxes is pretty complicated.
+        #   We need a Canvas, a Scrollbar, a Frame, checkboxes, and Master.
+        #   The checkboxes are inserted into the frame. The frame is inserted into the Canvas.
+        #   The Canvas and Scrollbar are inserted into Master.
         tag_canvas = tkinter.Canvas(master=self.master)
         tag_canvas_scrollbar = tkinter.Scrollbar(
             master=self.master,
@@ -120,6 +126,8 @@ class TimespinnerBingo(tkinter.Frame):
         def tag_canvas_scroll(event):
             tag_canvas.yview_scroll(-1 * int(event.delta / 120), 'units')
 
+        # Bind the canvas and frame to scroll the canvas whenever the mouse is over them and
+        #   the user scrolls the mouse wheel
         tag_canvas.bind('<MouseWheel>', tag_canvas_scroll)
         tag_container.bind('<MouseWheel>', tag_canvas_scroll)
 
@@ -132,15 +140,24 @@ class TimespinnerBingo(tkinter.Frame):
                 text=string.capwords(key),
                 variable=var
             )
+            # Have the checkbox start checked if the item is enabled in config
             if self.config.get_tag_data()[key] == 'enabled':
                 widget.select()
+            # Add the checkbox to the variable list so the checkbox state can be identified later
             self.variables[widget["text"]] = var
+            # icon_changed is the changelistener that runs when the checkbox is checked
             widget.config(command=lambda arg=widget: self.tag_changed(arg))
+            # We want to bind the mousewheel to scroll the canvas holding the checkbox
+            #   If this is not done, the canvas will not scroll if the mouse is over a checkbox
             widget.bind('<MouseWheel>', tag_canvas_scroll)
+            # Anchoring justifies the checkboxes against the left side
             widget.pack(anchor="w")
             objective_index += 1
 
+        # The Canvas create_window command is required for the scrollbar to work properly
         tag_canvas.create_window(0, 0, anchor='nw', window=tag_container, width=175)
+        # The Canvas update_idletasks waits until the checkboxes are added before configuring the scrollbar
+        #   If this is not done, the scrollbar does not work properly because the Canvas is not full yet?
         tag_canvas.update_idletasks()
         tag_canvas.configure(
             scrollregion=tag_canvas.bbox('all'),
@@ -154,7 +171,6 @@ class TimespinnerBingo(tkinter.Frame):
         #
         # Column 5
         #
-
         config_separator = ttk.Separator(
             master=self.master,
             orient="vertical"
@@ -162,15 +178,16 @@ class TimespinnerBingo(tkinter.Frame):
         config_separator.grid(row=5, column=5, rowspan=3, padx=(5, 5), sticky="ns")
 
         #
-        # Column 6 & 7 - layout settings
+        # Column 6 & 7 - generation settings
         #
-
         layout_label = tkinter.Label(
             master=self.master,
-            text="Layout Settings"
+            text="Generation Settings"
         )
         layout_label.grid(row=5, column=6, sticky="s")
 
+        # Since the entirety of the area below the header is a single row in master, we need to
+        #   wrap everything in a frame to effectively split it into sub-rows
         layout_frame = tkinter.Frame(
             master=self.master
         )
@@ -230,7 +247,7 @@ class TimespinnerBingo(tkinter.Frame):
         if self.config.allow_duplicates["value"]: allow_duplicates_checkbox.select()
         allow_duplicates_checkbox.config(command=lambda arg=allow_duplicates_checkbox: self.checkbox_changed(arg))
         self.variables[allow_duplicates_checkbox["text"]] = var
-        allow_duplicates_checkbox.grid(row=3, column=1, padx=(5, 0), pady=(5, 0), columnspan=2, sticky="w")
+        allow_duplicates_checkbox.grid(row=3, column=1, padx=(5, 0), pady=(0, 0), columnspan=2, sticky="w")
 
         available_icons_label = tkinter.Label(
             master=layout_frame,
@@ -255,12 +272,6 @@ class TimespinnerBingo(tkinter.Frame):
             text=str(self.requiredIcons)
         )
         self.lblRequiredIcons.grid(row=5, column=2, padx=(0, 5), pady=(5, 0), sticky="w")
-
-        generation_separator = ttk.Separator(
-            master=layout_frame,
-            orient="horizontal"
-        )
-        generation_separator.grid(row=6, column=1, columnspan=2, sticky="ew")
 
         seed_label = tkinter.Label(
             master=layout_frame,
@@ -353,13 +364,6 @@ class TimespinnerBingo(tkinter.Frame):
                 self.config.set_allow_duplicates(False)
             else:
                 self.config.set_allow_duplicates(True)
-        # for v in self.config.__dict__.values():
-        #     if type(v) is dict:
-        #         if v["friendlyName"] == arg["text"]:
-        #             if variable:
-        #                 v["value"] = True
-        #             else:
-        #                 v["value"] = False
         self.config.save_settings()
         self.calculateAvailableIcons()
         if self.availableIcons > 0 and self.config.allow_duplicates["value"]:

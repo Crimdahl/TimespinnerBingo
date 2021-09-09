@@ -23,7 +23,8 @@ class BingoBoard(tkinter.Frame):
         self.settings = config
         random.seed(config.get_seed())
 
-        # Iterate over dictionaries in settings, making images out of the enabled lists of items
+        # Iterate over dictionaries in settings, making images out of the enabled lists of items.
+        #   Images are inserted directly into the candidate dictionary for use later.
         for icon in candidates:
             image = tkinter.PhotoImage(file=os.path.join(self.iconDirectory, icon + ".png"))
             assert image.height() == image.width(), \
@@ -37,42 +38,49 @@ class BingoBoard(tkinter.Frame):
             elif image.height() == 128:
                 candidates[icon]['image'] = image.subsample(4)
 
+        # Create and insert a search field, but only if there are at least 3 columns of space on the board.
         if self.settings.get_columns()["value"] > 3:
-            widget = tkinter.Label(
+            search_label = tkinter.Label(
                 master=self.master,
                 text="Search"
             )
             if self.settings.get_use_compact_mode()["value"]:
-                widget.grid(row=0, column=0, columnspan=2, padx=(2, 2), sticky="w")
+                search_label.grid(row=0, column=0, columnspan=2, padx=(2, 2), sticky="w")
             else:
-                widget.grid(row=0, column=0, padx=(2, 2), sticky="e")
+                search_label.grid(row=0, column=0, padx=(2, 2), sticky="e")
 
-            widget = CustomText(
+            search_box = CustomText(
                 master=self.master,
                 height=1,
                 width=0
             )
-            widget.bind("<<TextModified>>", self.search_box_modified)
-            widget.grid(row=0, column=1, columnspan=self.settings.get_columns()["value"] - 2, sticky="ew")
+            search_box.bind("<<TextModified>>", self.search_box_modified)
+            search_box.grid(row=0, column=1, columnspan=self.settings.get_columns()["value"] - 2, sticky="ew")
 
-            widget = tkinter.Button(
+            search_button = tkinter.Button(
                 master=self.master,
                 compound=tkinter.BOTTOM,
                 text="Mark",
-                command=self.toggleButtons
+                command=self.toggle_buttons
             )
-            widget.grid(row=0, column=self.settings.get_columns()["value"] - 1, columnspan=2, padx=(2, 2), sticky="ew")
+            search_button.grid(row=0, column=self.settings.get_columns()["value"] - 1, columnspan=2, padx=(2, 2), sticky="ew")
 
+        # For each column and each row...
         for c in range(int(self.settings.get_columns()["value"])):
             for r in range(1, int(self.settings.get_rows()["value"]) + 1):
+                # ...create a frame, select a random tile from the set of candidates
+                #   and create a button out of it.
                 frame = tkinter.Frame(
                     master=self.master
                 )
                 frame.grid(row=r, column=c, padx=2, pady=2)
                 random_key = random.choice(list(candidates.keys()))
                 image = candidates[random_key]['image']
+
                 if not self.settings.get_allow_duplicates()["value"]:
+                    # If duplicates are not allowed, remove the candidate so it isn't reused
                     candidates.pop(random_key)
+
                 if self.settings.get_use_compact_mode()["value"]:
                     button = tkinter.Button(
                         master=frame,
@@ -91,27 +99,31 @@ class BingoBoard(tkinter.Frame):
                         compound=tkinter.BOTTOM,
                         bg=hexWhite
                     )
+
                 self.buttons[random_key].append(button)
                 self.button_events.append(ButtonEvents(button, random_key))
                 button.image = image
                 button.pack()
 
-        widget = tkinter.Label(
+        seed_label = tkinter.Label(
             master=self.master,
             text="Seed:"
         )
-        widget.grid(row=self.settings.get_rows()["value"] + 1, column=0, padx=(2, 2), sticky="w")
+        seed_label.grid(row=self.settings.get_rows()["value"] + 1, column=0, padx=(2, 2), sticky="w")
 
-        widget = tkinter.Text(
+        seed_input = tkinter.Text(
             master=self.master,
             height=1,
             width=len(str(self.settings.get_seed()))
         )
-        widget.insert(1.0, str(self.settings.get_seed()))
-        widget.configure(state="disabled")
-        widget.grid(row=self.settings.get_rows()["value"] + 1, column=0, columnspan=9999, padx=(40, 2), sticky="w")
+        seed_input.insert(1.0, str(self.settings.get_seed()))
+        seed_input.configure(state="disabled")
+        seed_input.grid(row=self.settings.get_rows()["value"] + 1, column=0, columnspan=9999, padx=(40, 2), sticky="w")
 
     def search_box_modified(self, event=None):
+        # This method searches through all buttons to find ones with items that contain
+        #   the search value text.
+        # If the button is unmarked, it colors the background gold
         search_value = event.widget.get(1.0, "end-1c")
         if search_value != "":
             for k, v in self.buttons.items():
@@ -131,7 +143,8 @@ class BingoBoard(tkinter.Frame):
                     elif button["bg"] == hexAltGreen:
                         button["bg"] = hexGreen
 
-    def toggleButtons(self):
+    def toggle_buttons(self):
+        # For any buttons colored with a gold background after searching,
         for k, v in self.buttons.items():
             for button in v:
                 if button["bg"] == hexGold:
@@ -175,6 +188,7 @@ class ButtonEvents(object):
         else:
             self.clicked = True
 
+    # Changes button background color when the mouse hovers over the button
     def enter(self, event=None):
         self.schedule()
         if self.widget["bg"] == hexWhite:
@@ -186,6 +200,7 @@ class ButtonEvents(object):
         elif self.widget["bg"] == hexAltGreen:
             self.widget["bg"] = hexGold
 
+    # Reverts button background color change when the mouse leaves the button
     def leave(self, event=None):
         self.unschedule()
         self.hidetip()
@@ -224,7 +239,7 @@ class ButtonEvents(object):
         # Leaves only the label and removes the app window
         self.tw.wm_overrideredirect(True)
         self.tw.wm_geometry("+%d+%d" % (x, y))
-        label = tkinter.Label(self.tw, text=self.text, justify='left',
+        label = tkinter.Label(self.tw, text=string.capwords(self.text), justify='left',
                               background="#ffffff", relief='solid', borderwidth=1,
                               wraplength=self.wraplength)
         label.pack(ipadx=1)

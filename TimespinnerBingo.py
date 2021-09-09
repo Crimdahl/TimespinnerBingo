@@ -4,11 +4,13 @@ import BingoBoard
 import Config
 from time import time
 from tkinter import ttk
+from tkinter import messagebox
 from copy import deepcopy
 
 
 class TimespinnerBingo(tkinter.Frame):
-    def __init__(self, master):
+    def __init__(self, master, **kw):
+        super().__init__(master, **kw)
         self.config = Config.Config()
         self.master = master
         self.cbRows = None
@@ -64,7 +66,7 @@ class TimespinnerBingo(tkinter.Frame):
             )
             # Have the checkbox start checked if the item is enabled in config
             if self.config.get_tile_data()[key]['enabled']:
-               widget.select()
+                widget.select()
             # Add the checkbox to the variable list so the checkbox state can be identified later
             self.variables[widget["text"]] = var
             # icon_changed is the changelistener that runs when the checkbox is checked
@@ -233,7 +235,8 @@ class TimespinnerBingo(tkinter.Frame):
             text=self.config.use_compact_mode["friendlyName"],
             variable=var
         )
-        if self.config.use_compact_mode["value"]: compact_mode_checkbox.select()
+        if self.config.use_compact_mode["value"]:
+            compact_mode_checkbox.select()
         compact_mode_checkbox.config(command=lambda arg=compact_mode_checkbox: self.checkbox_changed(arg))
         self.variables[compact_mode_checkbox["text"]] = var
         compact_mode_checkbox.grid(row=2, column=1, padx=(5, 0), pady=(5, 0), columnspan=2, sticky="w")
@@ -244,7 +247,8 @@ class TimespinnerBingo(tkinter.Frame):
             text=self.config.allow_duplicates["friendlyName"],
             variable=var
         )
-        if self.config.allow_duplicates["value"]: allow_duplicates_checkbox.select()
+        if self.config.allow_duplicates["value"]:
+            allow_duplicates_checkbox.select()
         allow_duplicates_checkbox.config(command=lambda arg=allow_duplicates_checkbox: self.checkbox_changed(arg))
         self.variables[allow_duplicates_checkbox["text"]] = var
         allow_duplicates_checkbox.grid(row=3, column=1, padx=(5, 0), pady=(0, 0), columnspan=2, sticky="w")
@@ -294,13 +298,13 @@ class TimespinnerBingo(tkinter.Frame):
         )
         self.btnGenerate.grid(row=8, column=1, columnspan=2, padx=(10, 10), pady=(5, 20), sticky="ew")
 
-        self.calculateAvailableIcons()
+        self.calculate_available_icons()
         if self.availableIcons > 0 and self.config.allow_duplicates["value"]:
             self.lblAvailableIcons["text"] = "Infinite"
         self.calculate_required_icons()
         self.validate_required_icons()
 
-    def calculateAvailableIcons(self):
+    def calculate_available_icons(self):
         self.availableIcons = 0
         self.candidates = {}
         tile_data = self.config.get_tile_data()
@@ -318,11 +322,11 @@ class TimespinnerBingo(tkinter.Frame):
             if tile_enabled_by_tags:
                 self.availableIcons += 1
                 self.candidates[key] = tile_data[key]
-        self.lblAvailableIcons["text"] = text = str(self.availableIcons)
+        self.lblAvailableIcons["text"] = str(self.availableIcons)
 
     def calculate_required_icons(self):
         self.requiredIcons = int(self.cbRows.get()) * int(self.cbColumns.get())
-        self.lblRequiredIcons["text"] = text = str(self.requiredIcons)
+        self.lblRequiredIcons["text"] = str(self.requiredIcons)
 
     def icon_changed(self, arg):
         icon_name = str.lower(arg["text"])
@@ -333,7 +337,7 @@ class TimespinnerBingo(tkinter.Frame):
                     self.config.get_tile_data()[key]['enabled'] = False
                 else:
                     self.config.get_tile_data()[key]['enabled'] = True
-        self.calculateAvailableIcons()
+        self.calculate_available_icons()
         self.validate_required_icons()
         self.config.save_settings()
 
@@ -346,7 +350,7 @@ class TimespinnerBingo(tkinter.Frame):
                     self.config.get_tag_data()[key] = 'disabled'
                 else:
                     self.config.get_tag_data()[key] = 'enabled'
-        self.calculateAvailableIcons()
+        self.calculate_available_icons()
         self.validate_required_icons()
         self.config.save_settings()
 
@@ -365,7 +369,7 @@ class TimespinnerBingo(tkinter.Frame):
             else:
                 self.config.set_allow_duplicates(True)
         self.config.save_settings()
-        self.calculateAvailableIcons()
+        self.calculate_available_icons()
         if self.availableIcons > 0 and self.config.allow_duplicates["value"]:
             self.lblAvailableIcons["text"] = "Infinite"
         self.validate_required_icons()
@@ -405,7 +409,7 @@ class TimespinnerBingo(tkinter.Frame):
                 seed = int(self.tfSeed.get("1.0", "end"))
                 self.config.set_seed(seed)
             except ValueError:
-                tkinter.messagebox.showerror(title="Seed Error", message="Error: The seed must be an integer.")
+                messagebox.showerror(title="Seed Error", message="Error: The seed must be an integer.")
                 return
         else:
             self.config.set_seed(int(time() * 1000))
@@ -417,7 +421,6 @@ class TimespinnerBingo(tkinter.Frame):
 
 if __name__ == "__main__":
     root = tkinter.Tk()
-    #root.geometry("800x400")
     settingsUI = TimespinnerBingo(root)
     root.title("Bingo Settings")
     root.mainloop()

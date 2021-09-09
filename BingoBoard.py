@@ -15,7 +15,8 @@ hexAltGreen = "#008100"
 class BingoBoard(tkinter.Frame):
     iconDirectory = os.path.join(os.path.dirname(__file__), "Icons")
 
-    def __init__(self, master, config, candidates):
+    def __init__(self, master, config, candidates, **kw):
+        super().__init__(master, **kw)
         self.master = master
         self.buttons = defaultdict(list)
         self.button_events = []
@@ -63,7 +64,11 @@ class BingoBoard(tkinter.Frame):
                 text="Mark",
                 command=self.toggle_buttons
             )
-            search_button.grid(row=0, column=self.settings.get_columns()["value"] - 1, columnspan=2, padx=(2, 2), sticky="ew")
+            search_button.grid(row=0,
+                               column=self.settings.get_columns()["value"] - 1,
+                               columnspan=2,
+                               padx=(2, 2),
+                               sticky="ew")
 
         # For each column and each row...
         for c in range(int(self.settings.get_columns()["value"])):
@@ -171,8 +176,8 @@ class CustomText(tkinter.Text):
 
 class ButtonEvents(object):
     def __init__(self, widget, text="widget info"):
-        self.waittime = 0
-        self.wraplength = 180
+        self.wait_time = 0
+        self.wrap_length = 180
         self.widget = widget
         self.text = text
         self.widget.bind("<Enter>", self.enter)
@@ -218,7 +223,7 @@ class ButtonEvents(object):
 
     def schedule(self):
         self.unschedule()
-        self.id = self.widget.after(self.waittime, self.showtip)
+        self.id = self.widget.after(self.wait_time, self.showtip)
 
     def unschedule(self):
         id = self.id
@@ -227,7 +232,6 @@ class ButtonEvents(object):
             self.widget.after_cancel(id)
 
     def showtip(self, event=None):
-        x = y = 0
         x, y, cx, cy = self.widget.bbox("insert")
         x += self.widget.winfo_rootx()
         if self.widget["text"] == "":
@@ -241,7 +245,7 @@ class ButtonEvents(object):
         self.tw.wm_geometry("+%d+%d" % (x, y))
         label = tkinter.Label(self.tw, text=string.capwords(self.text), justify='left',
                               background="#ffffff", relief='solid', borderwidth=1,
-                              wraplength=self.wraplength)
+                              wraplength=self.wrap_length)
         label.pack(ipadx=1)
 
     def hidetip(self):

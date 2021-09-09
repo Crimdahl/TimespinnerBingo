@@ -1,3 +1,4 @@
+import string
 import tkinter
 import os
 import random
@@ -14,42 +15,27 @@ hexAltGreen = "#008100"
 class BingoBoard(tkinter.Frame):
     iconDirectory = os.path.join(os.path.dirname(__file__), "Icons")
 
-    def __init__(self, master, settings):
+    def __init__(self, master, config, candidates):
         self.master = master
-        self.icons = {}
         self.buttons = defaultdict(list)
         self.button_events = []
         self.btnToggle = None
-        self.settings = settings
-        random.seed(settings.get_seed())
+        self.settings = config
+        random.seed(config.get_seed())
 
         # Iterate over dictionaries in settings, making images out of the enabled lists of items
-        for k, v in self.settings.__dict__.items():
-            if type(v) is dict:
-                if v["settingtype"] == "item" and v["value"]:
-                    for item in v["items"]:
-                        if settings.exclude_meyef["value"] and item == "Meyef":
-                            continue
-                        if settings.exclude_jewelry_box["value"] and item == "Jewelry Box":
-                            continue
-                        if settings.exclude_talaria_attachment["value"] and item == "Talaria Attachment":
-                            continue
-                        if settings.exclude_kickstarter_items["value"] and (
-                                item == "Wyrm Brooch" or item == "Greed Brooch" or item == "Umbra Orb"):
-                            continue
-                        if settings.exclude_rare_items["value"] and (item == "Elemental Beads"):
-                            continue
-                        image = tkinter.PhotoImage(file=os.path.join(self.iconDirectory, item + ".png"))
-                        assert image.height() == image.width(), \
-                            "Supplied icons should be square in shape, 16x16, 32x32, 64x64, or 128x128."
-                        if image.height() == 16:
-                            self.icons[item] = image.zoom(2)
-                        elif image.height() == 32:
-                            self.icons[item] = image
-                        elif image.height() == 64:
-                            self.icons[item] = image.subsample(2)
-                        elif image.height() == 128:
-                            self.icons[item] = image.subsample(4)
+        for icon in candidates:
+            image = tkinter.PhotoImage(file=os.path.join(self.iconDirectory, icon + ".png"))
+            assert image.height() == image.width(), \
+                "Supplied icons should be square in shape, 16x16, 32x32, 64x64, or 128x128."
+            if image.height() == 16:
+                candidates[icon]['image'] = image.zoom(2)
+            elif image.height() == 32:
+                candidates[icon]['image'] = image
+            elif image.height() == 64:
+                candidates[icon]['image'] = image.subsample(2)
+            elif image.height() == 128:
+                candidates[icon]['image'] = image.subsample(4)
 
         if self.settings.get_columns()["value"] > 3:
             widget = tkinter.Label(
@@ -83,32 +69,31 @@ class BingoBoard(tkinter.Frame):
                     master=self.master
                 )
                 frame.grid(row=r, column=c, padx=2, pady=2)
-                random_key = random.choice(list(self.icons.keys()))
-                if self.settings.get_allow_duplicates()["value"]:
-                    icon = self.icons.get(random_key)
-                else:
-                    icon = self.icons.pop(random_key)
+                random_key = random.choice(list(candidates.keys()))
+                image = candidates[random_key]['image']
+                if not self.settings.get_allow_duplicates()["value"]:
+                    candidates.pop(random_key)
                 if self.settings.get_use_compact_mode()["value"]:
                     button = tkinter.Button(
                         master=frame,
-                        image=icon,
-                        width=icon.width(),
-                        height=icon.height(),
+                        image=image,
+                        width=image.width(),
+                        height=image.height(),
                         bg=hexWhite
                     )
                 else:
                     button = tkinter.Button(
                         master=frame,
-                        text=random_key.replace(" ", "\n", 1),
-                        image=icon,
-                        width=icon.width() * 2.5,
-                        height=icon.height() * 2,
+                        text=string.capwords(random_key).replace(" ", "\n", 1),
+                        image=image,
+                        width=image.width() * 2.5,
+                        height=image.height() * 2,
                         compound=tkinter.BOTTOM,
                         bg=hexWhite
                     )
                 self.buttons[random_key].append(button)
                 self.button_events.append(ButtonEvents(button, random_key))
-                button.image = icon
+                button.image = image
                 button.pack()
 
         widget = tkinter.Label(

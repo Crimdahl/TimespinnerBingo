@@ -1,13 +1,15 @@
+import string
 import tkinter
 import BingoBoard
-import Settings
+import Config
 from time import time
 from tkinter import ttk
+from copy import deepcopy
 
 
 class TimespinnerBingo(tkinter.Frame):
     def __init__(self, master):
-        self.settings = Settings.Settings()
+        self.config = Config.Config()
         self.master = master
         self.cbRows = None
         self.cbColumns = None
@@ -18,262 +20,367 @@ class TimespinnerBingo(tkinter.Frame):
         self.tfSeed = None
         self.btnGenerate = None
         self.variables = {}
+        self.candidates = {}
 
         #
-        # COLUMN 0
+        # COLUMN 0-1 - icon settings
         #
         # Label at the top of Column 1
-        widget = tkinter.Label(master=self.master,
-                               text="Generation Settings")
-        widget.grid(row=0, column=0, pady=(10, 0), sticky="s")
+        icon_label = tkinter.Label(master=self.master,
+                               text="Icons")
+        icon_label.grid(row=5, column=0, sticky="s")
 
-        widget = ttk.Separator(
+        icon_separator = ttk.Separator(
             master=self.master,
             orient="horizontal"
         )
-        widget.grid(row=1, column=0, columnspan=100, sticky="ew")
+        icon_separator.grid(row=6, column=0, columnspan=100, sticky="ew")
 
-        var = tkinter.BooleanVar()
-        widget = tkinter.Checkbutton(
+        icon_canvas = tkinter.Canvas(master=self.master)
+        icon_canvas_scrollbar = tkinter.Scrollbar(
             master=self.master,
-            text=self.settings.allow_duplicates["friendlyName"],
-            variable=var
+            orient='vertical',
+            command=icon_canvas.yview
         )
-        if self.settings.allow_duplicates["value"]: widget.select()
-        widget.config(command=lambda arg=widget: self.checkbox_changed(arg))
-        self.variables[widget["text"]] = var
-        widget.grid(row=2, column=0, padx=(10, 0), columnspan=2, sticky="w")
+        icon_container = tkinter.Frame(master=icon_canvas)
+
+        # Method that scrolls the list of icons with the mousewheel
+        def icon_canvas_scroll(event):
+            icon_canvas.yview_scroll(-1 * int(event.delta / 120), 'units')
+
+        icon_canvas.bind('<MouseWheel>', icon_canvas_scroll)
+        icon_container.bind('<MouseWheel>', icon_canvas_scroll)
 
         # Iterates through item-related settings, providing checkboxes
-        objective_index = 3
-        for k, v in self.settings.__dict__.items():
-            if type(v) is dict:
-                if v["settingtype"] == "item":
-                    var = tkinter.IntVar()
-                    widget = tkinter.Checkbutton(
-                        master=self.master,
-                        text=v["friendlyName"],
-                        variable=var
-                    )
-                    if v["value"]: widget.select()
-                    self.variables[widget["text"]] = var
-                    widget.config(command=lambda arg=widget: self.checkbox_changed(arg))
-                    widget.grid(row=objective_index, column=0, padx=(10, 10), sticky="nw")
-                    objective_index += 1
+        objective_index = 2
+        for key in self.config.get_tile_data().keys():
+            var = tkinter.IntVar()
+            widget = tkinter.Checkbutton(
+                master=icon_container,
+                text=string.capwords(key),
+                variable=var
+            )
 
+            if self.config.get_tile_data()[key]['enabled']:
+               widget.select()
+            self.variables[widget["text"]] = var
+            widget.config(command=lambda arg=widget: self.icon_changed(arg))
+            widget.bind('<MouseWheel>', icon_canvas_scroll)
+            widget.pack(anchor="w")
+            objective_index += 1
+
+        icon_canvas.create_window(0, 0, anchor='nw', window=icon_container, width=175)
+        icon_canvas.update_idletasks()
+        icon_canvas.configure(
+            scrollregion=icon_canvas.bbox('all'),
+            yscrollcommand=icon_canvas_scrollbar.set,
+            width=175
+        )
+
+        master.grid_rowconfigure(7, weight=1)
+        icon_canvas_scrollbar.grid(row=7, column=1, sticky='nse')
+        icon_canvas.grid(row=7, column=0, padx=(5, 0), sticky='ns')
+
+        # layout_settings_separator = ttk.Separator(
+        #     master=self.master,
+        #     orient="horizontal"
+        # )
+        # layout_settings_separator.grid(row=9, column=0, columnspan=7, sticky="ew")
         #
-        # Column 1 - Separator
+        # COLUMN 2 - Separator
         #
-        widget = ttk.Separator(
+        col_separator1 = ttk.Separator(
             master=self.master,
             orient="vertical"
         )
-        widget.grid(row=0, column=1, rowspan=objective_index + 1, sticky="nes")
+        col_separator1.grid(row=5, column=2, padx=(5, 5), rowspan=3, sticky="ns")
 
         #
-        # Column 2
+        # COLUMN 3-4 - tag settings
         #
-        widget = tkinter.Label(
+        tag_label = tkinter.Label(master=self.master,
+                                   text="Tags")
+        tag_label.grid(row=5, column=3, sticky="s")
+
+        tag_separator = ttk.Separator(
             master=self.master,
-            text="Exclusions"
+            orient="horizontal"
         )
-        widget.grid(row=0, column=2, pady=(10, 0), sticky="s")
+        tag_separator.grid(row=6, column=3, columnspan=100, sticky="ew")
+
+        tag_canvas = tkinter.Canvas(master=self.master)
+        tag_canvas_scrollbar = tkinter.Scrollbar(
+            master=self.master,
+            orient='vertical',
+            command=tag_canvas.yview
+        )
+        tag_container = tkinter.Frame(master=tag_canvas)
+
+        # Method that scrolls the list of icons with the mousewheel
+        def tag_canvas_scroll(event):
+            tag_canvas.yview_scroll(-1 * int(event.delta / 120), 'units')
+
+        tag_canvas.bind('<MouseWheel>', tag_canvas_scroll)
+        tag_container.bind('<MouseWheel>', tag_canvas_scroll)
 
         # Iterates through item-related settings, providing checkboxes
-        flag_index = 2
-        for k, v in self.settings.__dict__.items():
-            if type(v) is dict:
-                if v["settingtype"] == "exclusion":
-                    var = tkinter.IntVar()
-                    widget = tkinter.Checkbutton(
-                        master=self.master,
-                        text=v["friendlyName"],
-                        variable=var
-                    )
-                    if v["value"]: widget.select()
-                    self.variables[widget["text"]] = var
-                    widget.config(command=lambda arg=widget: self.checkbox_changed(arg))
-                    widget.grid(row=flag_index, column=2, padx=(10, 10), sticky="w")
-                    flag_index += 1
+        objective_index = 2
+        for key in sorted(self.config.get_tag_data().keys()):
+            var = tkinter.IntVar()
+            widget = tkinter.Checkbutton(
+                master=tag_container,
+                text=string.capwords(key),
+                variable=var
+            )
+            if self.config.get_tag_data()[key] == 'enabled':
+                widget.select()
+            self.variables[widget["text"]] = var
+            widget.config(command=lambda arg=widget: self.tag_changed(arg))
+            widget.bind('<MouseWheel>', tag_canvas_scroll)
+            widget.pack(anchor="w")
+            objective_index += 1
+
+        tag_canvas.create_window(0, 0, anchor='nw', window=tag_container, width=175)
+        tag_canvas.update_idletasks()
+        tag_canvas.configure(
+            scrollregion=tag_canvas.bbox('all'),
+            yscrollcommand=tag_canvas_scrollbar.set,
+            width=175
+        )
+
+        tag_canvas_scrollbar.grid(row=7, column=4, sticky='nse')
+        tag_canvas.grid(row=7, column=3, padx=(5, 0), sticky='ns')
 
         #
-        # Column 3 - Separator
+        # Column 5
         #
-        widget = ttk.Separator(
+
+        config_separator = ttk.Separator(
             master=self.master,
             orient="vertical"
         )
-        widget.grid(row=0, column=3, rowspan=objective_index - 2, sticky="ns")
+        config_separator.grid(row=5, column=5, rowspan=3, padx=(5, 5), sticky="ns")
 
         #
-        # Column 3 & 4
+        # Column 6 & 7 - layout settings
         #
-        widget = tkinter.Label(
+
+        layout_label = tkinter.Label(
             master=self.master,
             text="Layout Settings"
         )
-        widget.grid(row=0, column=4, columnspan=2)
+        layout_label.grid(row=5, column=6, sticky="s")
 
-        widget = tkinter.Label(
-            master=self.master,
+        layout_frame = tkinter.Frame(
+            master=self.master
+        )
+        layout_frame.grid(row=7, column=6, pady=(5, 0), sticky='news')
+
+        layout_rows_label = tkinter.Label(
+            master=layout_frame,
             text="Bingo Rows: "
         )
-        widget.grid(row=2, column=4, padx=(10, 0), sticky="w")
+        layout_rows_label.grid(row=0, column=1, padx=(5, 5), pady=(5, 0), sticky="w")
 
         self.cbRows = ttk.Combobox(
-            master=self.master,
+            master=layout_frame,
             text="Rows: " + str(self.availableIcons),
             width=5,
-            values=("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
+            values=("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"),
+            state='readonly'
         )
-        self.cbRows.current(int(self.settings.rows["value"]) - 1)
+        self.cbRows.current(int(self.config.rows["value"]) - 1)
         self.cbRows.bind("<<ComboboxSelected>>", lambda x: self.rows_changed())
-        self.cbRows.grid(row=2, column=5, padx=(0, 10), sticky="ew")
+        self.cbRows.grid(row=0, column=2, padx=(0, 10), pady=(5, 0), sticky="ew")
 
-        widget = tkinter.Label(
-            master=self.master,
+        layout_columns_label = tkinter.Label(
+            master=layout_frame,
             text="Bingo Columns: "
         )
-        widget.grid(row=3, column=4, padx=(10, 0), sticky="w")
+        layout_columns_label.grid(row=1, column=1, padx=(5, 0), pady=(5, 0), sticky="w")
 
         self.cbColumns = ttk.Combobox(
-            master=self.master,
+            master=layout_frame,
             text="Columns: " + str(self.availableIcons),
             width=5,
-            values=("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
+            values=("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"),
+            state='readonly'
         )
-        self.cbColumns.current(int(self.settings.columns["value"]) - 1)
+        self.cbColumns.current(int(self.config.columns["value"]) - 1)
         self.cbColumns.bind("<<ComboboxSelected>>", lambda x: self.columns_changed())
-        self.cbColumns.grid(row=3, column=5, padx=(0, 10), sticky="ew")
+        self.cbColumns.grid(row=1, column=2, padx=(0, 10), pady=(5, 0), sticky="ew")
 
         var = tkinter.BooleanVar()
-        widget = tkinter.Checkbutton(
-            master=self.master,
-            text=self.settings.use_compact_mode["friendlyName"],
+        compact_mode_checkbox = tkinter.Checkbutton(
+            master=layout_frame,
+            text=self.config.use_compact_mode["friendlyName"],
             variable=var
         )
-        if self.settings.use_compact_mode["value"]: widget.select()
-        widget.config(command=lambda arg=widget: self.checkbox_changed(arg))
-        self.variables[widget["text"]] = var
-        widget.grid(row=4, column=4, padx=(10, 0), columnspan=2, sticky="w")
+        if self.config.use_compact_mode["value"]: compact_mode_checkbox.select()
+        compact_mode_checkbox.config(command=lambda arg=compact_mode_checkbox: self.checkbox_changed(arg))
+        self.variables[compact_mode_checkbox["text"]] = var
+        compact_mode_checkbox.grid(row=2, column=1, padx=(5, 0), pady=(5, 0), columnspan=2, sticky="w")
 
-        widget = tkinter.Label(
-            master=self.master,
+        var = tkinter.BooleanVar()
+        allow_duplicates_checkbox = tkinter.Checkbutton(
+            master=layout_frame,
+            text=self.config.allow_duplicates["friendlyName"],
+            variable=var
+        )
+        if self.config.allow_duplicates["value"]: allow_duplicates_checkbox.select()
+        allow_duplicates_checkbox.config(command=lambda arg=allow_duplicates_checkbox: self.checkbox_changed(arg))
+        self.variables[allow_duplicates_checkbox["text"]] = var
+        allow_duplicates_checkbox.grid(row=3, column=1, padx=(5, 0), pady=(5, 0), columnspan=2, sticky="w")
+
+        available_icons_label = tkinter.Label(
+            master=layout_frame,
             text="Available Items :"
         )
-        widget.grid(row=objective_index - 5, column=4, padx=(10, 0), sticky="e")
+        available_icons_label.grid(row=4, column=1, padx=(5, 0), pady=(5, 0), sticky="w")
 
         self.lblAvailableIcons = tkinter.Label(
-            master=self.master,
+            master=layout_frame,
             text=str(self.availableIcons)
         )
-        self.lblAvailableIcons.grid(row=objective_index - 5, column=5, padx=(0, 10), sticky="w")
+        self.lblAvailableIcons.grid(row=4, column=2, pady=(5, 0),  sticky="w")
 
-        widget = tkinter.Label(
-            master=self.master,
+        required_items_label = tkinter.Label(
+            master=layout_frame,
             text="Required Items :"
         )
-        widget.grid(row=objective_index - 4, column=4, padx=(10, 0), sticky="e")
+        required_items_label.grid(row=5, column=1, padx=(5, 0), pady=(5, 0), sticky="w")
 
         self.lblRequiredIcons = tkinter.Label(
-            master=self.master,
+            master=layout_frame,
             text=str(self.requiredIcons)
         )
-        self.lblRequiredIcons.grid(row=objective_index - 4, column=5, padx=(0, 10), sticky="w")
+        self.lblRequiredIcons.grid(row=5, column=2, padx=(0, 5), pady=(5, 0), sticky="w")
 
-        widget = ttk.Separator(
-            master=self.master,
+        generation_separator = ttk.Separator(
+            master=layout_frame,
             orient="horizontal"
         )
-        widget.grid(row=objective_index - 3, column=2, columnspan=4, sticky="sew")
+        generation_separator.grid(row=6, column=1, columnspan=2, sticky="ew")
 
-        widget = tkinter.Label(
-            master=self.master,
+        seed_label = tkinter.Label(
+            master=layout_frame,
             text="Seed:"
         )
-        widget.grid(row=objective_index - 2, column=2, padx=(10, 0), sticky="w")
+        seed_label.grid(row=7, column=1, padx=(5, 0), pady=(50, 0), sticky="w")
 
         self.tfSeed = tkinter.Text(
-            master=self.master,
+            master=layout_frame,
             height=1,
-            width=40
+            width=15
         )
-        self.tfSeed.grid(row=objective_index - 2, column=2, columnspan=4, padx=(10, 0))
+        self.tfSeed.grid(row=7, column=1, columnspan=2, padx=(40, 10), pady=(50, 0), sticky='ew')
 
         self.btnGenerate = tkinter.Button(
-            master=self.master,
+            master=layout_frame,
             compound=tkinter.BOTTOM,
-            width=18,
             text="Generate!",
             command=self.generate_bingo_board
         )
-        self.btnGenerate.grid(row=objective_index - 1, column=2, columnspan=4, pady=(0, 10), padx=(10, 10), sticky="ew")
+        self.btnGenerate.grid(row=8, column=1, columnspan=2, padx=(10, 10), pady=(5, 20), sticky="ew")
 
         self.calculateAvailableIcons()
-        if self.availableIcons > 0 and self.settings.allow_duplicates["value"]:
+        if self.availableIcons > 0 and self.config.allow_duplicates["value"]:
             self.lblAvailableIcons["text"] = "Infinite"
         self.calculate_required_icons()
         self.validate_required_icons()
 
     def calculateAvailableIcons(self):
         self.availableIcons = 0
-        items = set()
-        for k, v in self.settings.__dict__.items():
-            if type(v) is dict:
-                if v["settingtype"] == "item" and v["value"]:
-                    for item in v["items"]:
-                        if self.settings.exclude_meyef["value"] and item == "Meyef":
-                            continue
-                        if self.settings.exclude_jewelry_box["value"] and item == "Jewelry Box":
-                            continue
-                        if self.settings.exclude_talaria_attachment["value"] and item == "Talaria Attachment":
-                            continue
-                        if self.settings.exclude_kickstarter_items["value"] \
-                                and (item == "Wyrm Brooch"
-                                     or item == "Greed Brooch"
-                                     or item == "Umbra Orb"):
-                            continue
-                        if self.settings.exclude_rare_items["value"] and (item == "Elemental Beads"):
-                            continue
-                        items.add(item)
+        self.candidates = {}
+        tile_data = self.config.get_tile_data()
+        tag_data = self.config.get_tag_data()
+        for key in tile_data.keys():
+            tile_enabled_by_tags = True
+            if not tile_data[key]['enabled']:
+                # Not enabled - do not check tags, do not pass go
+                continue
 
-        self.availableIcons += len(items)
+            for tag_key in tile_data[key]['tags']:
+                if tag_data[tag_key] == 'disabled':
+                    tile_enabled_by_tags = False
+
+            if tile_enabled_by_tags:
+                self.availableIcons += 1
+                self.candidates[key] = tile_data[key]
         self.lblAvailableIcons["text"] = text = str(self.availableIcons)
 
     def calculate_required_icons(self):
         self.requiredIcons = int(self.cbRows.get()) * int(self.cbColumns.get())
         self.lblRequiredIcons["text"] = text = str(self.requiredIcons)
 
-    def checkbox_changed(self, arg):
-        variable = self.variables[arg["text"]].get()
-        for v in self.settings.__dict__.values():
-            if type(v) is dict:
-                if v["friendlyName"] == arg["text"]:
-                    if variable:
-                        v["value"] = True
-                    else:
-                        v["value"] = False
-        self.settings.save_settings()
+    def icon_changed(self, arg):
+        icon_name = str.lower(arg["text"])
+        state = self.variables[arg["text"]].get()
+        for key in self.config.get_tile_data().keys():
+            if key == icon_name:
+                if state == 0:
+                    self.config.get_tile_data()[key]['enabled'] = False
+                else:
+                    self.config.get_tile_data()[key]['enabled'] = True
         self.calculateAvailableIcons()
-        if self.availableIcons > 0 and self.settings.allow_duplicates["value"]:
+        self.validate_required_icons()
+        self.config.save_settings()
+
+    def tag_changed(self, arg):
+        tag_name = str.lower(arg['text'])
+        state = self.variables[arg['text']].get()
+        for key in self.config.get_tag_data().keys():
+            if key == tag_name:
+                if state == 0:
+                    self.config.get_tag_data()[key] = 'disabled'
+                else:
+                    self.config.get_tag_data()[key] = 'enabled'
+        self.calculateAvailableIcons()
+        self.validate_required_icons()
+        self.config.save_settings()
+
+    def checkbox_changed(self, arg):
+        variable = str.lower(arg['text'])
+        state = self.variables[arg["text"]].get()
+        print(variable)
+        if variable == "use compact mode":
+            if state == 0:
+                self.config.set_use_compact_mode(False)
+            else:
+                self.config.set_use_compact_mode(True)
+        elif variable == "allow duplicates":
+            if state == 0:
+                self.config.set_allow_duplicates(False)
+            else:
+                self.config.set_allow_duplicates(True)
+        # for v in self.config.__dict__.values():
+        #     if type(v) is dict:
+        #         if v["friendlyName"] == arg["text"]:
+        #             if variable:
+        #                 v["value"] = True
+        #             else:
+        #                 v["value"] = False
+        self.config.save_settings()
+        self.calculateAvailableIcons()
+        if self.availableIcons > 0 and self.config.allow_duplicates["value"]:
             self.lblAvailableIcons["text"] = "Infinite"
         self.validate_required_icons()
         return
 
     def rows_changed(self):
-        self.settings.set_rows(int(self.cbRows.get()))
-        self.settings.save_settings()
+        self.config.set_rows(int(self.cbRows.get()))
+        self.config.save_settings()
         self.calculate_required_icons()
         self.validate_required_icons()
 
     def columns_changed(self):
-        self.settings.set_columns(int(self.cbColumns.get()))
-        self.settings.save_settings()
+        self.config.set_columns(int(self.cbColumns.get()))
+        self.config.save_settings()
         self.calculate_required_icons()
         self.validate_required_icons()
 
     def validate_required_icons(self):
-        if not self.settings.allow_duplicates["value"]:
+        if not self.config.allow_duplicates["value"]:
             if self.availableIcons - self.requiredIcons < 0:
                 self.btnGenerate["state"] = tkinter.DISABLED
                 self.lblAvailableIcons["fg"] = "Red"
@@ -292,20 +399,21 @@ class TimespinnerBingo(tkinter.Frame):
         if self.tfSeed.get("1.0", "end-1c") != "":
             try:
                 seed = int(self.tfSeed.get("1.0", "end"))
-                self.settings.set_seed(seed)
+                self.config.set_seed(seed)
             except ValueError:
                 tkinter.messagebox.showerror(title="Seed Error", message="Error: The seed must be an integer.")
                 return
         else:
-            self.settings.set_seed(int(time() * 1000))
+            self.config.set_seed(int(time() * 1000))
         new_window = tkinter.Toplevel(root)
         new_window.title("Timespinner Bingo")
-        BingoBoard.BingoBoard(new_window, self.settings)
+        BingoBoard.BingoBoard(new_window, self.config, deepcopy(self.candidates))
         return
 
 
 if __name__ == "__main__":
     root = tkinter.Tk()
+    #root.geometry("800x400")
     settingsUI = TimespinnerBingo(root)
     root.title("Bingo Settings")
     root.mainloop()

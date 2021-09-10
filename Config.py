@@ -14,7 +14,7 @@ elif __file__:
 class Config(object):
     def __init__(self):
         # Apply default settings
-        self.CONFIG_VERSION = "1.1.3"
+        self.CONFIG_VERSION = "1.1.4"
         # If a settings file exists, apply the settings from that file
         try:
             with codecs.open(CONFIG_PATH, encoding="utf-8-sig", mode="r") as f:
@@ -62,6 +62,20 @@ class Config(object):
                     "path": "icons\\",
                     "tags": [
                         "equipment", "equipment: trinkets", "shop items"
+                    ]
+                },
+                "ancient frail": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "antheia": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "antidote": {
@@ -113,6 +127,20 @@ class Config(object):
                         "enemies", "enemies: bosses"
                     ]
                 },
+                "baby cheveur": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "barbed anemone": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "berry pick-mi-up": {
                     "enabled": True,
                     "path": "icons\\",
@@ -160,6 +188,13 @@ class Config(object):
                     "path": "icons\\",
                     "tags": [
                         "orbs", "element: dark", "set: blood"
+                    ]
+                },
+                "blossom automaton": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "blue orb": {
@@ -239,11 +274,25 @@ class Config(object):
                         "equipment", "equipment: trinkets", "enemy drops", "enemy drops: rare"
                     ]
                 },
+                "cheveur au vin": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "consumables", "quest locked", "shop items"
+                    ]
+                },
                 "cheveur breast": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "quest items", "enemy drops"
+                    ]
+                },
+                "cheveur dragoon": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "cheveur drumstick": {
@@ -260,11 +309,46 @@ class Config(object):
                         "quest items", "enemy drops"
                     ]
                 },
+                "cheveur fly": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "cheveur hatchling": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "cheveur helicopter": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "cheveur plume": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "equipment", "equipment: trinkets", "enemy drops"
+                    ]
+                },
+                "cheveur spring": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "cheveur tank": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "colossal blade": {
@@ -288,6 +372,13 @@ class Config(object):
                         "equipment", "equipment: hats", "enemy drops"
                     ]
                 },
+                "conviction": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "copper breastplate": {
                     "enabled": True,
                     "path": "icons\\",
@@ -302,11 +393,25 @@ class Config(object):
                         "equipment", "equipment: body armors", "enemy drops"
                     ]
                 },
+                "copper wyvern": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "corruption": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "spells", "element: dark", "set: nether"
+                    ]
+                },
+                "creeping fungus": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "crimson vortex": {
@@ -328,6 +433,27 @@ class Config(object):
                     "path": "icons\\",
                     "tags": [
                         "familiars"
+                    ]
+                },
+                "demon guard": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "devil's vine": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "djinn": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: bosses", "vanilla only"
                     ]
                 },
                 "djinn inferno": {
@@ -372,6 +498,13 @@ class Config(object):
                         "passives", "set: gun"
                     ]
                 },
+                "ectoplasm": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "eel meat": {
                     "enabled": True,
                     "path": "icons\\",
@@ -400,11 +533,32 @@ class Config(object):
                         "equipment", "equipment: hats"
                     ]
                 },
+                "empire giantess": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "empire knight": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "empire orb": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "orbs", "element: aura", "set: empire"
+                    ]
+                },
+                "empire sniper": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "empress cake": {
@@ -463,6 +617,20 @@ class Config(object):
                         "consumables", "enemy drops", "shop items"
                     ]
                 },
+                "experiment 11": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "experiment 13": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: bosses"
+                    ]
+                },
                 "eye orb": {
                     "enabled": True,
                     "path": "icons\\",
@@ -470,11 +638,32 @@ class Config(object):
                         "orbs", "element: sharp", "set: eye"
                     ]
                 },
+                "fanged anemone": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "feline sentry": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "enemies", "enemies: bosses"
+                    ]
+                },
+                "fetid wyvern": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "fiend": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "filigree clasp": {
@@ -498,6 +687,20 @@ class Config(object):
                         "orbs", "element: fire", "set: fire"
                     ]
                 },
+                "flesh arachnid": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "fledgling warbird": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "food synthesizer": {
                     "enabled": True,
                     "path": "icons\\",
@@ -512,11 +715,32 @@ class Config(object):
                         "spells", "element: sharp", "set: forbidden"
                     ]
                 },
+                "freshwater eel": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "fried cheveur": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "consumables", "quest locked", "shop items"
+                    ]
+                },
                 "frozen spires": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "spells", "element: ice", "set: ice"
+                    ]
+                },
+                "galactic sage": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "galaxy earrings": {
@@ -610,11 +834,32 @@ class Config(object):
                         "orbs", "element: sharp", "set: gun"
                     ]
                 },
+                "harvest rat": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "health up": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "stat upgrades"
+                    ]
+                },
+                "helix toad": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "hell gazer": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "herb": {
@@ -638,6 +883,13 @@ class Config(object):
                         "consumables"
                     ]
                 },
+                "historical documents": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "quest locked", "quest items"
+                    ]
+                },
                 "hope ring": {
                     "enabled": True,
                     "path": "icons\\",
@@ -645,11 +897,25 @@ class Config(object):
                         "passives", "set: radiant"
                     ]
                 },
+                "ice adept": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "ice orb": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "orbs", "element: ice", "set: ice"
+                    ]
+                },
+                "ichor": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "icicle ring": {
@@ -685,6 +951,20 @@ class Config(object):
                     "path": "icons\\",
                     "tags": [
                         "relics", "flags: jewelry box start"
+                    ]
+                },
+                "justice": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "kain": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: rare"
                     ]
                 },
                 "keycard a": {
@@ -743,6 +1023,41 @@ class Config(object):
                         "equipment", "equipment: hats"
                     ]
                 },
+                "lachiem archer": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "lachiem engineer": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "lachiem giantess": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "lachiem knight": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "lachiemi sun": {
+                    "enabled": False,
+                    "path": "icons\\",
+                    "tags": [
+                        "consumables"
+                    ]
+                },
                 "leather helmet": {
                     "enabled": True,
                     "path": "icons\\",
@@ -799,6 +1114,13 @@ class Config(object):
                         "equipment", "equipment: trinkets"
                     ]
                 },
+                "meteor sparrow": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "meyef": {
                     "enabled": True,
                     "path": "icons\\",
@@ -834,11 +1156,25 @@ class Config(object):
                         "consumables", "enemy drops", "shop items"
                     ]
                 },
+                "mobile blossom": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "mother of pearl": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "equipment", "equipment: trinkets", "enemy drops", "enemy drops: rare"
+                    ]
+                },
+                "mushroom tower": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "mushroom": {
@@ -853,6 +1189,13 @@ class Config(object):
                     "path": "icons\\",
                     "tags": [
                         "orbs", "element: blunt", "element: dark", "set: nether"
+                    ]
+                },
+                "nethershade": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: rare"
                     ]
                 },
                 "nightmare": {
@@ -897,11 +1240,25 @@ class Config(object):
                         "consumables", "enemy drops"
                     ]
                 },
+                "ornagy rut": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: rare", "vanilla only"
+                    ]
+                },
                 "pendulum": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "equipment", "equipment: trinkets"
+                    ]
+                },
+                "plantbat": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "plasma core": {
@@ -939,6 +1296,13 @@ class Config(object):
                         "orbs", "element: plasma", "set: plasma"
                     ]
                 },
+                "plasma pod": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "plump maggot": {
                     "enabled": True,
                     "path": "icons\\",
@@ -951,6 +1315,13 @@ class Config(object):
                     "path": "icons\\",
                     "tags": [
                         "equipment", "equipment: hats"
+                    ]
+                },
+                "poison moth": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "potion": {
@@ -988,11 +1359,46 @@ class Config(object):
                         "consumables", "enemy drops"
                     ]
                 },
+                "royal advisor": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "royal casserole": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "consumables", "quest locked", "shop items"
+                    ]
+                },
+                "royal demon": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "royal guard": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "royal ring": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "passives", "set: plasma"
+                    ]
+                },
+                "ryshia": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: rare"
                     ]
                 },
                 "sand bottle": {
@@ -1023,11 +1429,32 @@ class Config(object):
                         "passives", "set: blood"
                     ]
                 },
+                "sauteed wyvern tail": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "consumables", "quest locked", "shop items"
+                    ]
+                },
+                "savage cheveur": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "scythe ring": {
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
                         "passives", "element: sharp"
+                    ]
+                },
+                "security guard": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "security vest": {
@@ -1049,6 +1476,13 @@ class Config(object):
                     "path": "icons\\",
                     "tags": [
                         "equipment", "equipment: trinkets"
+                    ]
+                },
+                "security turret": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "shadow seal": {
@@ -1100,6 +1534,13 @@ class Config(object):
                         "quest items", "enemy drops"
                     ]
                 },
+                "siren": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "soul scanner": {
                     "enabled": True,
                     "path": "icons\\",
@@ -1114,6 +1555,13 @@ class Config(object):
                         "consumables", "quest locked"
                     ]
                 },
+                "sporevine": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "sprite": {
                     "enabled": True,
                     "path": "icons\\",
@@ -1126,6 +1574,13 @@ class Config(object):
                     "path": "icons\\",
                     "tags": [
                         "passives", "set: empire"
+                    ]
+                },
+                "starship engineer": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "storm eye": {
@@ -1182,6 +1637,13 @@ class Config(object):
                     "path": "icons\\",
                     "tags": [
                         "relics", "progression", "flags: fast start"
+                    ]
+                },
+                "tenebrous moth": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
                     ]
                 },
                 "timespinner gear 1": {
@@ -1247,6 +1709,13 @@ class Config(object):
                         "orbs", "element: dark", "set: umbra", "kickstarter exclusive"
                     ]
                 },
+                "unagi roll": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "consumables", "quest locked", "shop items"
+                    ]
+                },
                 "viletian crown": {
                     "enabled": True,
                     "path": "icons\\",
@@ -1282,6 +1751,13 @@ class Config(object):
                         "orbs", "element: sharp", "set: wind"
                     ]
                 },
+                "worm blossom": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
                 "wyrm brooch": {
                     "enabled": True,
                     "path": "icons\\",
@@ -1302,6 +1778,20 @@ class Config(object):
                     "tags": [
                         "enemies", "enemies: bosses"
                     ]
+                },
+                "zeal": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: normal"
+                    ]
+                },
+                "zel": {
+                    "enabled": True,
+                    "path": "icons\\",
+                    "tags": [
+                        "enemies", "enemies: rare", "vanilla only"
+                    ]
                 }
             }
             self.tags = {}
@@ -1316,7 +1806,10 @@ class Config(object):
                     except KeyError:
                         self.tags[tag]['icons'] = []
                         self.tags[tag]['icons'].append(key)
-                    self.tags[tag]['enabled'] = True
+                    if tag not in ['vanilla only']:
+                        self.tags[tag]['enabled'] = True
+                    else:
+                        self.tags[tag]['enabled'] = False
 
             self.use_compact_mode = {"friendlyName": "Use Compact Mode", "settingtype": "generation", "value": False}
             self.allow_duplicates = {"friendlyName": "Allow Duplicates", "settingtype": "generation", "value": False}

@@ -573,7 +573,7 @@ class CheckboxEvents(object):
                 if column_index > number_of_columns - 1:
                     column_index = 0
 
-            tooltip_text = "Tags for " + string.capwords(self.key) + "\n------------\n" + output
+            tooltip_text = "Icons for " + string.capwords(self.key) + "\n------------\n" + output
 
         label = tkinter.Label(self.tooltip,
                               text=tooltip_text,

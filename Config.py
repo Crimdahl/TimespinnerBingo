@@ -14,7 +14,7 @@ elif __file__:
 class Config(object):
     def __init__(self):
         # Apply default settings
-        self.CONFIG_VERSION = "1.1.2"
+        self.CONFIG_VERSION = "1.1.3"
         # If a settings file exists, apply the settings from that file
         try:
             with codecs.open(CONFIG_PATH, encoding="utf-8-sig", mode="r") as f:

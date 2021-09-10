@@ -1,13 +1,18 @@
+import string
 import tkinter
 import BingoBoard
-import Settings
+import Config
 from time import time
 from tkinter import ttk
+from tkinter import messagebox
+from copy import deepcopy
+from math import ceil
 
 
 class TimespinnerBingo(tkinter.Frame):
-    def __init__(self, master):
-        self.settings = Settings.Settings()
+    def __init__(self, master, **kw):
+        super().__init__(master, **kw)
+        self.config = Config.Config()
         self.master = master
         self.cbRows = None
         self.cbColumns = None
@@ -18,262 +23,376 @@ class TimespinnerBingo(tkinter.Frame):
         self.tfSeed = None
         self.btnGenerate = None
         self.variables = {}
+        self.candidates = {}
+        self.checkbox_events = []
 
         #
-        # COLUMN 0
+        # COLUMN 0-1 - icon settings
         #
         # Label at the top of Column 1
-        widget = tkinter.Label(master=self.master,
-                               text="Generation Settings")
-        widget.grid(row=0, column=0, pady=(10, 0), sticky="s")
+        icon_label = tkinter.Label(master=self.master, text="Icons")
+        icon_label.grid(row=5, column=0, sticky="s")
 
-        widget = ttk.Separator(
+        icon_separator = ttk.Separator(master=self.master, orient="horizontal")
+        icon_separator.grid(row=6, column=0, columnspan=100, sticky="ew")
+
+        # To make a scrollable area containing the checkboxes is pretty complicated.
+        #   We need a Canvas, a Scrollbar, a Frame, checkboxes, and Master.
+        #   The checkboxes are inserted into the frame. The frame is inserted into the Canvas.
+        #   The Canvas and Scrollbar are inserted into Master.
+        icon_canvas = tkinter.Canvas(master=self.master)
+        icon_canvas_scrollbar = tkinter.Scrollbar(
+            master=self.master,
+            orient='vertical',
+            command=icon_canvas.yview
+        )
+        icon_container = tkinter.Frame(master=icon_canvas)
+
+        # Method that scrolls the list of icons with the mousewheel
+        def icon_canvas_scroll(event):
+            icon_canvas.yview_scroll(-1 * int(event.delta / 120), 'units')
+
+        # Bind the canvas and frame to scroll the canvas whenever the mouse is over them and
+        #   the user scrolls the mouse wheel
+        icon_canvas.bind('<MouseWheel>', icon_canvas_scroll)
+        icon_container.bind('<MouseWheel>', icon_canvas_scroll)
+
+        # Iterates through item-related settings, providing checkboxes
+        objective_index = 2
+        for key in self.config.get_tile_data().keys():
+            var = tkinter.IntVar()
+            widget = tkinter.Checkbutton(
+                master=icon_container,
+                text=string.capwords(key),
+                variable=var
+            )
+            # Have the checkbox start checked if the item is enabled in config
+            if self.config.get_tile_data()[key]['enabled']:
+                widget.select()
+            # Add the checkbox to the variable list so the checkbox state can be identified later
+            self.variables[widget["text"]] = var
+            # icon_changed is the changelistener that runs when the checkbox is checked
+            widget.config(command=lambda arg=widget: self.icon_changed(arg))
+            # We want to bind the mousewheel to scroll the canvas holding the checkbox
+            #   If this is not done, the canvas will not scroll if the mouse is over a checkbox
+            widget.bind('<MouseWheel>', icon_canvas_scroll)
+            self.checkbox_events.append(CheckboxEvents(widget, self.config, "icon", key))
+            # Anchoring justifies the checkboxes against the left side
+            widget.pack(anchor="w")
+            objective_index += 1
+
+        # The Canvas create_window command is required for the scrollbar to work properly
+        icon_canvas.create_window(0, 0, anchor='nw', window=icon_container, width=175)
+        # The Canvas update_idletasks waits until the checkboxes are added before configuring the scrollbar
+        #   If this is not done, the scrollbar does not work properly because the Canvas is not full yet?
+        icon_canvas.update_idletasks()
+        icon_canvas.configure(
+            scrollregion=icon_canvas.bbox('all'),
+            yscrollcommand=icon_canvas_scrollbar.set,
+            width=175
+        )
+
+        # Configures the row containing the scrollable canvases to fill the rest of the window vertically
+        master.grid_rowconfigure(7, weight=1)
+        icon_canvas_scrollbar.grid(row=7, column=1, sticky='nse')
+        icon_canvas.grid(row=7, column=0, padx=(5, 0), sticky='ns')
+
+        #
+        # COLUMN 2 - Separator
+        #
+        col_separator1 = ttk.Separator(master=self.master, orient="vertical")
+        col_separator1.grid(row=5, column=2, padx=(5, 5), rowspan=3, sticky="ns")
+
+        #
+        # COLUMN 3-4 - tag settings
+        #
+        tag_label = tkinter.Label(master=self.master, text="Tags")
+        tag_label.grid(row=5, column=3, sticky="s")
+
+        tag_separator = ttk.Separator(
             master=self.master,
             orient="horizontal"
         )
-        widget.grid(row=1, column=0, columnspan=100, sticky="ew")
+        tag_separator.grid(row=6, column=3, columnspan=100, sticky="ew")
 
-        var = tkinter.BooleanVar()
-        widget = tkinter.Checkbutton(
+        # To make a scrollable area containing the checkboxes is pretty complicated.
+        #   We need a Canvas, a Scrollbar, a Frame, checkboxes, and Master.
+        #   The checkboxes are inserted into the frame. The frame is inserted into the Canvas.
+        #   The Canvas and Scrollbar are inserted into Master.
+        tag_canvas = tkinter.Canvas(master=self.master)
+        tag_canvas_scrollbar = tkinter.Scrollbar(
             master=self.master,
-            text=self.settings.allow_duplicates["friendlyName"],
-            variable=var
+            orient='vertical',
+            command=tag_canvas.yview
         )
-        if self.settings.allow_duplicates["value"]: widget.select()
-        widget.config(command=lambda arg=widget: self.checkbox_changed(arg))
-        self.variables[widget["text"]] = var
-        widget.grid(row=2, column=0, padx=(10, 0), columnspan=2, sticky="w")
+        tag_container = tkinter.Frame(master=tag_canvas)
+
+        # Method that scrolls the list of icons with the mousewheel
+        def tag_canvas_scroll(event):
+            tag_canvas.yview_scroll(-1 * int(event.delta / 120), 'units')
+
+        # Bind the canvas and frame to scroll the canvas whenever the mouse is over them and
+        #   the user scrolls the mouse wheel
+        tag_canvas.bind('<MouseWheel>', tag_canvas_scroll)
+        tag_container.bind('<MouseWheel>', tag_canvas_scroll)
 
         # Iterates through item-related settings, providing checkboxes
-        objective_index = 3
-        for k, v in self.settings.__dict__.items():
-            if type(v) is dict:
-                if v["settingtype"] == "item":
-                    var = tkinter.IntVar()
-                    widget = tkinter.Checkbutton(
-                        master=self.master,
-                        text=v["friendlyName"],
-                        variable=var
-                    )
-                    if v["value"]: widget.select()
-                    self.variables[widget["text"]] = var
-                    widget.config(command=lambda arg=widget: self.checkbox_changed(arg))
-                    widget.grid(row=objective_index, column=0, padx=(10, 10), sticky="nw")
-                    objective_index += 1
+        objective_index = 2
+        for key in sorted(self.config.get_tag_data().keys()):
+            var = tkinter.IntVar()
+            widget = tkinter.Checkbutton(
+                master=tag_container,
+                text=string.capwords(key),
+                variable=var
+            )
+            # Have the checkbox start checked if the item is enabled in config
+            if self.config.get_tag_data()[key]['enabled']:
+                widget.select()
+            # Add the checkbox to the variable list so the checkbox state can be identified later
+            self.variables[widget["text"]] = var
+            # icon_changed is the changelistener that runs when the checkbox is checked
+            widget.config(command=lambda arg=widget: self.tag_changed(arg))
+            # We want to bind the mousewheel to scroll the canvas holding the checkbox
+            #   If this is not done, the canvas will not scroll if the mouse is over a checkbox
+            widget.bind('<MouseWheel>', tag_canvas_scroll)
+            self.checkbox_events.append(CheckboxEvents(widget, self.config, "tag", key))
+            # Anchoring justifies the checkboxes against the left side
+            widget.pack(anchor="w")
+            objective_index += 1
+
+        # The Canvas create_window command is required for the scrollbar to work properly
+        tag_canvas.create_window(0, 0, anchor='nw', window=tag_container, width=175)
+        # The Canvas update_idletasks waits until the checkboxes are added before configuring the scrollbar
+        #   If this is not done, the scrollbar does not work properly because the Canvas is not full yet?
+        tag_canvas.update_idletasks()
+        tag_canvas.configure(
+            scrollregion=tag_canvas.bbox('all'),
+            yscrollcommand=tag_canvas_scrollbar.set,
+            width=175
+        )
+
+        tag_canvas_scrollbar.grid(row=7, column=4, sticky='nse')
+        tag_canvas.grid(row=7, column=3, padx=(5, 0), sticky='ns')
 
         #
-        # Column 1 - Separator
+        # Column 5
         #
-        widget = ttk.Separator(
+        config_separator = ttk.Separator(
             master=self.master,
             orient="vertical"
         )
-        widget.grid(row=0, column=1, rowspan=objective_index + 1, sticky="nes")
+        config_separator.grid(row=5, column=5, rowspan=3, padx=(5, 5), sticky="ns")
 
         #
-        # Column 2
+        # Column 6 & 7 - generation settings
         #
-        widget = tkinter.Label(
+        layout_label = tkinter.Label(
             master=self.master,
-            text="Exclusions"
+            text="Generation Settings"
         )
-        widget.grid(row=0, column=2, pady=(10, 0), sticky="s")
+        layout_label.grid(row=5, column=6, sticky="s")
 
-        # Iterates through item-related settings, providing checkboxes
-        flag_index = 2
-        for k, v in self.settings.__dict__.items():
-            if type(v) is dict:
-                if v["settingtype"] == "exclusion":
-                    var = tkinter.IntVar()
-                    widget = tkinter.Checkbutton(
-                        master=self.master,
-                        text=v["friendlyName"],
-                        variable=var
-                    )
-                    if v["value"]: widget.select()
-                    self.variables[widget["text"]] = var
-                    widget.config(command=lambda arg=widget: self.checkbox_changed(arg))
-                    widget.grid(row=flag_index, column=2, padx=(10, 10), sticky="w")
-                    flag_index += 1
-
-        #
-        # Column 3 - Separator
-        #
-        widget = ttk.Separator(
-            master=self.master,
-            orient="vertical"
+        # Since the entirety of the area below the header is a single row in master, we need to
+        #   wrap everything in a frame to effectively split it into sub-rows
+        layout_frame = tkinter.Frame(
+            master=self.master
         )
-        widget.grid(row=0, column=3, rowspan=objective_index - 2, sticky="ns")
+        layout_frame.grid(row=7, column=6, pady=(5, 0), sticky='news')
 
-        #
-        # Column 3 & 4
-        #
-        widget = tkinter.Label(
-            master=self.master,
-            text="Layout Settings"
-        )
-        widget.grid(row=0, column=4, columnspan=2)
-
-        widget = tkinter.Label(
-            master=self.master,
+        layout_rows_label = tkinter.Label(
+            master=layout_frame,
             text="Bingo Rows: "
         )
-        widget.grid(row=2, column=4, padx=(10, 0), sticky="w")
+        layout_rows_label.grid(row=0, column=1, padx=(5, 5), pady=(5, 0), sticky="w")
 
         self.cbRows = ttk.Combobox(
-            master=self.master,
+            master=layout_frame,
             text="Rows: " + str(self.availableIcons),
             width=5,
-            values=("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
+            values=("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"),
+            state='readonly'
         )
-        self.cbRows.current(int(self.settings.rows["value"]) - 1)
+        self.cbRows.current(int(self.config.rows["value"]) - 1)
         self.cbRows.bind("<<ComboboxSelected>>", lambda x: self.rows_changed())
-        self.cbRows.grid(row=2, column=5, padx=(0, 10), sticky="ew")
+        self.cbRows.grid(row=0, column=2, padx=(0, 10), pady=(5, 0), sticky="ew")
 
-        widget = tkinter.Label(
-            master=self.master,
+        layout_columns_label = tkinter.Label(
+            master=layout_frame,
             text="Bingo Columns: "
         )
-        widget.grid(row=3, column=4, padx=(10, 0), sticky="w")
+        layout_columns_label.grid(row=1, column=1, padx=(5, 0), pady=(5, 0), sticky="w")
 
         self.cbColumns = ttk.Combobox(
-            master=self.master,
+            master=layout_frame,
             text="Columns: " + str(self.availableIcons),
             width=5,
-            values=("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
+            values=("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"),
+            state='readonly'
         )
-        self.cbColumns.current(int(self.settings.columns["value"]) - 1)
+        self.cbColumns.current(int(self.config.columns["value"]) - 1)
         self.cbColumns.bind("<<ComboboxSelected>>", lambda x: self.columns_changed())
-        self.cbColumns.grid(row=3, column=5, padx=(0, 10), sticky="ew")
+        self.cbColumns.grid(row=1, column=2, padx=(0, 10), pady=(5, 0), sticky="ew")
 
         var = tkinter.BooleanVar()
-        widget = tkinter.Checkbutton(
-            master=self.master,
-            text=self.settings.use_compact_mode["friendlyName"],
+        compact_mode_checkbox = tkinter.Checkbutton(
+            master=layout_frame,
+            text=self.config.use_compact_mode["friendlyName"],
             variable=var
         )
-        if self.settings.use_compact_mode["value"]: widget.select()
-        widget.config(command=lambda arg=widget: self.checkbox_changed(arg))
-        self.variables[widget["text"]] = var
-        widget.grid(row=4, column=4, padx=(10, 0), columnspan=2, sticky="w")
+        if self.config.use_compact_mode["value"]:
+            compact_mode_checkbox.select()
+        compact_mode_checkbox.config(command=lambda arg=compact_mode_checkbox: self.checkbox_changed(arg))
+        self.variables[compact_mode_checkbox["text"]] = var
+        compact_mode_checkbox.grid(row=2, column=1, padx=(5, 0), pady=(5, 0), columnspan=2, sticky="w")
 
-        widget = tkinter.Label(
-            master=self.master,
+        var = tkinter.BooleanVar()
+        allow_duplicates_checkbox = tkinter.Checkbutton(
+            master=layout_frame,
+            text=self.config.allow_duplicates["friendlyName"],
+            variable=var
+        )
+        if self.config.allow_duplicates["value"]:
+            allow_duplicates_checkbox.select()
+        allow_duplicates_checkbox.config(command=lambda arg=allow_duplicates_checkbox: self.checkbox_changed(arg))
+        self.variables[allow_duplicates_checkbox["text"]] = var
+        allow_duplicates_checkbox.grid(row=3, column=1, padx=(5, 0), pady=(0, 0), columnspan=2, sticky="w")
+
+        available_icons_label = tkinter.Label(
+            master=layout_frame,
             text="Available Items :"
         )
-        widget.grid(row=objective_index - 5, column=4, padx=(10, 0), sticky="e")
+        available_icons_label.grid(row=4, column=1, padx=(5, 0), pady=(5, 0), sticky="w")
 
         self.lblAvailableIcons = tkinter.Label(
-            master=self.master,
+            master=layout_frame,
             text=str(self.availableIcons)
         )
-        self.lblAvailableIcons.grid(row=objective_index - 5, column=5, padx=(0, 10), sticky="w")
+        self.lblAvailableIcons.grid(row=4, column=2, pady=(5, 0),  sticky="w")
 
-        widget = tkinter.Label(
-            master=self.master,
+        required_items_label = tkinter.Label(
+            master=layout_frame,
             text="Required Items :"
         )
-        widget.grid(row=objective_index - 4, column=4, padx=(10, 0), sticky="e")
+        required_items_label.grid(row=5, column=1, padx=(5, 0), pady=(5, 0), sticky="w")
 
         self.lblRequiredIcons = tkinter.Label(
-            master=self.master,
+            master=layout_frame,
             text=str(self.requiredIcons)
         )
-        self.lblRequiredIcons.grid(row=objective_index - 4, column=5, padx=(0, 10), sticky="w")
+        self.lblRequiredIcons.grid(row=5, column=2, padx=(0, 5), pady=(5, 0), sticky="w")
 
-        widget = ttk.Separator(
-            master=self.master,
-            orient="horizontal"
-        )
-        widget.grid(row=objective_index - 3, column=2, columnspan=4, sticky="sew")
-
-        widget = tkinter.Label(
-            master=self.master,
+        seed_label = tkinter.Label(
+            master=layout_frame,
             text="Seed:"
         )
-        widget.grid(row=objective_index - 2, column=2, padx=(10, 0), sticky="w")
+        seed_label.grid(row=7, column=1, padx=(5, 0), pady=(50, 0), sticky="w")
 
         self.tfSeed = tkinter.Text(
-            master=self.master,
+            master=layout_frame,
             height=1,
-            width=40
+            width=15
         )
-        self.tfSeed.grid(row=objective_index - 2, column=2, columnspan=4, padx=(10, 0))
+        self.tfSeed.grid(row=7, column=1, columnspan=2, padx=(40, 10), pady=(50, 0), sticky='ew')
 
         self.btnGenerate = tkinter.Button(
-            master=self.master,
+            master=layout_frame,
             compound=tkinter.BOTTOM,
-            width=18,
             text="Generate!",
             command=self.generate_bingo_board
         )
-        self.btnGenerate.grid(row=objective_index - 1, column=2, columnspan=4, pady=(0, 10), padx=(10, 10), sticky="ew")
+        self.btnGenerate.grid(row=8, column=1, columnspan=2, padx=(10, 10), pady=(5, 20), sticky="ew")
 
-        self.calculateAvailableIcons()
-        if self.availableIcons > 0 and self.settings.allow_duplicates["value"]:
+        self.calculate_available_icons()
+        if self.availableIcons > 0 and self.config.allow_duplicates["value"]:
             self.lblAvailableIcons["text"] = "Infinite"
         self.calculate_required_icons()
         self.validate_required_icons()
 
-    def calculateAvailableIcons(self):
+    def calculate_available_icons(self):
         self.availableIcons = 0
-        items = set()
-        for k, v in self.settings.__dict__.items():
-            if type(v) is dict:
-                if v["settingtype"] == "item" and v["value"]:
-                    for item in v["items"]:
-                        if self.settings.exclude_meyef["value"] and item == "Meyef":
-                            continue
-                        if self.settings.exclude_jewelry_box["value"] and item == "Jewelry Box":
-                            continue
-                        if self.settings.exclude_talaria_attachment["value"] and item == "Talaria Attachment":
-                            continue
-                        if self.settings.exclude_kickstarter_items["value"] \
-                                and (item == "Wyrm Brooch"
-                                     or item == "Greed Brooch"
-                                     or item == "Umbra Orb"):
-                            continue
-                        if self.settings.exclude_rare_items["value"] and (item == "Elemental Beads"):
-                            continue
-                        items.add(item)
+        self.candidates = {}
+        tile_data = self.config.get_tile_data()
+        tag_data = self.config.get_tag_data()
+        for key in tile_data.keys():
+            tile_enabled_by_tags = True
+            if not tile_data[key]['enabled']:
+                # Not enabled - do not check tags, do not pass go
+                continue
 
-        self.availableIcons += len(items)
-        self.lblAvailableIcons["text"] = text = str(self.availableIcons)
+            for tag_key in tile_data[key]['tags']:
+                if not tag_data[tag_key]['enabled']:
+                    tile_enabled_by_tags = False
+
+            if tile_enabled_by_tags:
+                self.availableIcons += 1
+                self.candidates[key] = tile_data[key]
+        self.lblAvailableIcons["text"] = str(self.availableIcons)
 
     def calculate_required_icons(self):
         self.requiredIcons = int(self.cbRows.get()) * int(self.cbColumns.get())
-        self.lblRequiredIcons["text"] = text = str(self.requiredIcons)
+        self.lblRequiredIcons["text"] = str(self.requiredIcons)
+
+    def icon_changed(self, arg):
+        icon_name = str.lower(arg["text"])
+        state = self.variables[arg["text"]].get()
+        for key in self.config.get_tile_data().keys():
+            if key == icon_name:
+                if state == 0:
+                    self.config.get_tile_data()[key]['enabled'] = False
+                else:
+                    self.config.get_tile_data()[key]['enabled'] = True
+        self.calculate_available_icons()
+        self.validate_required_icons()
+        self.config.save_settings()
+
+    def tag_changed(self, arg):
+        tag_name = str.lower(arg['text'])
+        state = self.variables[arg['text']].get()
+        for key in self.config.get_tag_data().keys():
+            if key == tag_name:
+                if state == 0:
+                    self.config.get_tag_data()[key]['enabled'] = False
+                else:
+                    self.config.get_tag_data()[key]['enabled'] = True
+        self.calculate_available_icons()
+        self.validate_required_icons()
+        self.config.save_settings()
 
     def checkbox_changed(self, arg):
-        variable = self.variables[arg["text"]].get()
-        for v in self.settings.__dict__.values():
-            if type(v) is dict:
-                if v["friendlyName"] == arg["text"]:
-                    if variable:
-                        v["value"] = True
-                    else:
-                        v["value"] = False
-        self.settings.save_settings()
-        self.calculateAvailableIcons()
-        if self.availableIcons > 0 and self.settings.allow_duplicates["value"]:
+        variable = str.lower(arg['text'])
+        state = self.variables[arg["text"]].get()
+        print(variable)
+        if variable == "use compact mode":
+            if state == 0:
+                self.config.set_use_compact_mode(False)
+            else:
+                self.config.set_use_compact_mode(True)
+        elif variable == "allow duplicates":
+            if state == 0:
+                self.config.set_allow_duplicates(False)
+            else:
+                self.config.set_allow_duplicates(True)
+        self.config.save_settings()
+        self.calculate_available_icons()
+        if self.availableIcons > 0 and self.config.allow_duplicates["value"]:
             self.lblAvailableIcons["text"] = "Infinite"
         self.validate_required_icons()
         return
 
     def rows_changed(self):
-        self.settings.set_rows(int(self.cbRows.get()))
-        self.settings.save_settings()
+        self.config.set_rows(int(self.cbRows.get()))
+        self.config.save_settings()
         self.calculate_required_icons()
         self.validate_required_icons()
 
     def columns_changed(self):
-        self.settings.set_columns(int(self.cbColumns.get()))
-        self.settings.save_settings()
+        self.config.set_columns(int(self.cbColumns.get()))
+        self.config.save_settings()
         self.calculate_required_icons()
         self.validate_required_icons()
 
     def validate_required_icons(self):
-        if not self.settings.allow_duplicates["value"]:
+        if not self.config.allow_duplicates["value"]:
             if self.availableIcons - self.requiredIcons < 0:
                 self.btnGenerate["state"] = tkinter.DISABLED
                 self.lblAvailableIcons["fg"] = "Red"
@@ -292,17 +411,138 @@ class TimespinnerBingo(tkinter.Frame):
         if self.tfSeed.get("1.0", "end-1c") != "":
             try:
                 seed = int(self.tfSeed.get("1.0", "end"))
-                self.settings.set_seed(seed)
+                self.config.set_seed(seed)
             except ValueError:
-                tkinter.messagebox.showerror(title="Seed Error", message="Error: The seed must be an integer.")
+                messagebox.showerror(title="Seed Error", message="Error: The seed must be an integer.")
                 return
         else:
-            self.settings.set_seed(int(time() * 1000))
+            self.config.set_seed(int(time() * 1000))
         new_window = tkinter.Toplevel(root)
         new_window.title("Timespinner Bingo")
-        BingoBoard.BingoBoard(new_window, self.settings)
+        BingoBoard.BingoBoard(new_window, self.config, deepcopy(self.candidates))
         return
 
+class CheckboxEvents(object):
+    def __init__(self, widget, config=None, category="widget type", key="widget info"):
+        self.wait_time = 0
+        self.config = config
+        self.widget = widget
+        self.category = category
+        self.key = key
+        self.widget.bind("<Enter>", self.enter)
+        self.widget.bind("<Leave>", self.leave)
+        self.id = None
+        self.tooltip = None
+        self.clicked = False
+
+    def click(self, event):
+        if self.clicked:
+            self.clicked = False
+        else:
+            self.clicked = True
+
+    def leave(self, event=None):
+        self.unschedule()
+        self.hide_tooltip()
+
+    def enter(self, event=None):
+        self.schedule()
+
+    def schedule(self):
+        self.unschedule()
+        self.id = self.widget.after(self.wait_time, self.show_tooltip)
+
+    def unschedule(self):
+        id = self.id
+        self.id = None
+        if id:
+            self.widget.after_cancel(id)
+
+    def show_tooltip(self, event=None):
+        x, y, cx, cy = self.widget.bbox("insert")
+        x += self.widget.winfo_rootx()
+        if self.widget["text"] == "":
+            y += self.widget.winfo_rooty() - (self.widget.winfo_height())
+        else:
+            x += self.widget.master.winfo_width()
+            y += self.widget.winfo_rooty() - (self.widget.winfo_height())
+        # creates a top level window
+        self.tooltip = tkinter.Toplevel(self.widget)
+        # Leaves only the label and removes the app window
+        self.tooltip.wm_overrideredirect(True)
+        self.tooltip.wm_geometry("+%d+%d" % (x, y))
+
+        if self.category == "icon":
+            item_list = self.config.get_tile_data()[self.key]['tags']
+            header = "Tags for " + string.capwords(self.key) + "\n------------\n"
+        else:
+            item_list = self.config.get_tag_data()[self.key]['icons']
+            header = "Icons for " + string.capwords(self.key) + "\n------------\n"
+        number_of_columns = ceil(len(item_list) / 10)
+        column_width = [0] * number_of_columns
+
+        # Figure out the longest tags so that the layout is spaced properly
+        index = 0
+        for item in item_list:
+            column_width[index] = max(column_width[index], len(item))
+            index += 1
+            if index > number_of_columns - 1:
+                index = 0
+
+        # Display the tags in columns
+        index = 0
+        column_index = 0
+        output = ''
+        for item in item_list:
+            last_entry = index == len(item_list) - 1
+            beginning_of_column = column_index == 0
+            middle_of_column = column_index < number_of_columns - 1
+            end_of_column = column_index == number_of_columns - 1
+            if last_entry:
+                if beginning_of_column:
+                    # Entry is the last in the tag list AND at the beginning of a column
+                    output = output + '{tag: <{width}}'.format(tag=string.capwords(item),
+                                                               width=column_width[column_index] + 2)
+                elif last_entry and not beginning_of_column:
+                    # Entry is the last in the tag list but not at the beginning of a column
+                    output = output + '  {tag: <{width}}'.format(tag=string.capwords(item),
+                                                                 width=column_width[column_index] + 2)
+            else:
+                if beginning_of_column and not end_of_column:
+                    # If the item is not the last item and is at the start of a 2+ column display.
+                    output = output + '{tag: <{width}}'.format(tag=string.capwords(item),
+                                                               width=column_width[column_index] + 2) + '|'
+                elif beginning_of_column and end_of_column:
+                    # If the item is not the last item and is at the start of a 1 column display.
+                    output = output + '{tag: <{width}}'.format(tag=string.capwords(item),
+                                                               width=column_width[column_index] + 2) + '\n'
+                elif middle_of_column:
+                    # If the item is in the middle of a 3+ column display.
+                    output = output + '  {tag: <{width}}'.format(tag=string.capwords(item),
+                                                                 width=column_width[column_index] + 2) + '|'
+                elif end_of_column:
+                    # If the item is at the end of a 2+ column display.
+                    output = output + '  {tag: <{width}}'.format(tag=string.capwords(item),
+                                                                 width=column_width[column_index] + 2) + '\n'
+            index += 1
+            column_index += 1
+            if column_index > number_of_columns - 1:
+                column_index = 0
+
+        label = tkinter.Label(self.tooltip,
+                              text=header + output,
+                              font='TkFixedFont',
+                              justify='left',
+                              background="#ffffff",
+                              relief='solid',
+                              borderwidth=1)
+        label.pack(ipadx=1)
+
+    def hide_tooltip(self):
+        tw = self.tooltip
+        self.tooltip = None
+        if tw:
+            tw.destroy()
 
 if __name__ == "__main__":
     root = tkinter.Tk()

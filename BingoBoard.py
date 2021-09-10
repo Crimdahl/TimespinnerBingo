@@ -5,29 +5,36 @@ import random
 import re
 from collections import defaultdict
 
-hexGreen = "#008000"
-hexWhite = "#FFFFFF"
-hexBlack = "#000000"
-hexGold = "#daa520"
-hexAltGreen = "#008100"
+HEX_GREEN = "#008000"
+HEX_WHITE = "#FFFFFF"
+HEX_BLACK = "#000000"
+HEX_GOLD = "#daa520"
+HEX_ALT_GREEN = "#008100"
 
 
 class BingoBoard(tkinter.Frame):
-    iconDirectory = os.path.join(os.path.dirname(__file__), "Icons")
+    icon_directory = os.path.join(os.path.dirname(__file__), "Icons")
 
     def __init__(self, master, config, candidates, **kw):
         super().__init__(master, **kw)
         self.master = master
         self.buttons = defaultdict(list)
         self.button_events = []
-        self.btnToggle = None
+        self.btn_toggle = None
         self.settings = config
         random.seed(config.get_seed())
 
         # Iterate over dictionaries in settings, making images out of the enabled lists of items.
         #   Images are inserted directly into the candidate dictionary for use later.
         for icon in candidates:
-            image = tkinter.PhotoImage(file=os.path.join(self.iconDirectory, icon + ".png"))
+            image = None
+            # Enforce file name case insensitivity by iterating through the icon directory
+            #   comparing each filename to the icon's name in a case-insensitive manner
+            for icon_file in os.listdir(self.icon_directory):
+                if icon_file[:icon_file.rindex(".")].lower() == icon.lower():
+                    image = tkinter.PhotoImage(file=os.path.join(self.icon_directory, icon_file))
+            if not image:
+                image = tkinter.PhotoImage(file=os.path.join(self.icon_directory, "none.png"))
             assert image.height() == image.width(), \
                 "Supplied icons should be square in shape, 16x16, 32x32, 64x64, or 128x128."
             if image.height() == 16:
@@ -92,7 +99,7 @@ class BingoBoard(tkinter.Frame):
                         image=image,
                         width=image.width(),
                         height=image.height(),
-                        bg=hexWhite
+                        bg=HEX_WHITE
                     )
                 else:
                     button = tkinter.Button(
@@ -102,7 +109,7 @@ class BingoBoard(tkinter.Frame):
                         width=image.width() * 2.5,
                         height=image.height() * 2,
                         compound=tkinter.BOTTOM,
-                        bg=hexWhite
+                        bg=HEX_WHITE
                     )
 
                 self.buttons[random_key].append(button)
@@ -133,27 +140,27 @@ class BingoBoard(tkinter.Frame):
         if search_value != "":
             for k, v in self.buttons.items():
                 for button in v:
-                    if button["bg"] == hexGreen:
-                        button["bg"] = hexAltGreen
-                    if button["bg"] != hexGreen and button["bg"] != hexAltGreen:
-                        if button["bg"] != hexGreen and re.search(search_value.lower(), k.lower()):
-                            button["bg"] = hexGold
-                        elif button["bg"] != hexGreen:
-                            button["bg"] = hexWhite
+                    if button["bg"] == HEX_GREEN:
+                        button["bg"] = HEX_ALT_GREEN
+                    if button["bg"] != HEX_GREEN and button["bg"] != HEX_ALT_GREEN:
+                        if button["bg"] != HEX_GREEN and re.search(search_value.lower(), k.lower()):
+                            button["bg"] = HEX_GOLD
+                        elif button["bg"] != HEX_GREEN:
+                            button["bg"] = HEX_WHITE
         else:
             for k, v in self.buttons.items():
                 for button in v:
-                    if button["bg"] == hexGold:
-                        button["bg"] = hexWhite
-                    elif button["bg"] == hexAltGreen:
-                        button["bg"] = hexGreen
+                    if button["bg"] == HEX_GOLD:
+                        button["bg"] = HEX_WHITE
+                    elif button["bg"] == HEX_ALT_GREEN:
+                        button["bg"] = HEX_GREEN
 
     def toggle_buttons(self):
         # For any buttons colored with a gold background after searching,
         for k, v in self.buttons.items():
             for button in v:
-                if button["bg"] == hexGold:
-                    button["bg"] = hexAltGreen
+                if button["bg"] == HEX_GOLD:
+                    button["bg"] = HEX_ALT_GREEN
 
 
 class CustomText(tkinter.Text):
@@ -196,28 +203,28 @@ class ButtonEvents(object):
     # Changes button background color when the mouse hovers over the button
     def enter(self, event=None):
         self.schedule()
-        if self.widget["bg"] == hexWhite:
-            self.widget["bg"] = hexGreen
-        elif self.widget["bg"] == hexGreen:
-            self.widget["bg"] = hexWhite
-        elif self.widget["bg"] == hexGold:
-            self.widget["bg"] = hexAltGreen
-        elif self.widget["bg"] == hexAltGreen:
-            self.widget["bg"] = hexGold
+        if self.widget["bg"] == HEX_WHITE:
+            self.widget["bg"] = HEX_GREEN
+        elif self.widget["bg"] == HEX_GREEN:
+            self.widget["bg"] = HEX_WHITE
+        elif self.widget["bg"] == HEX_GOLD:
+            self.widget["bg"] = HEX_ALT_GREEN
+        elif self.widget["bg"] == HEX_ALT_GREEN:
+            self.widget["bg"] = HEX_GOLD
 
     # Reverts button background color change when the mouse leaves the button
     def leave(self, event=None):
         self.unschedule()
         self.hidetip()
         if not self.clicked:
-            if self.widget["bg"] == hexWhite:
-                self.widget["bg"] = hexGreen
-            elif self.widget["bg"] == hexGreen:
-                self.widget["bg"] = hexWhite
-            elif self.widget["bg"] == hexGold:
-                self.widget["bg"] = hexAltGreen
-            elif self.widget["bg"] == hexAltGreen:
-                self.widget["bg"] = hexGold
+            if self.widget["bg"] == HEX_WHITE:
+                self.widget["bg"] = HEX_GREEN
+            elif self.widget["bg"] == HEX_GREEN:
+                self.widget["bg"] = HEX_WHITE
+            elif self.widget["bg"] == HEX_GOLD:
+                self.widget["bg"] = HEX_ALT_GREEN
+            elif self.widget["bg"] == HEX_ALT_GREEN:
+                self.widget["bg"] = HEX_GOLD
         else:
             self.clicked = False
 

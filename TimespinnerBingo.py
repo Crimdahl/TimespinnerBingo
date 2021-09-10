@@ -425,7 +425,6 @@ class TimespinnerBingo(tkinter.Frame):
 class CheckboxEvents(object):
     def __init__(self, widget, config=None, category="widget type", key="widget info"):
         self.wait_time = 0
-        #self.wrap_length = 500
         self.config = config
         self.widget = widget
         self.category = category
@@ -472,118 +471,71 @@ class CheckboxEvents(object):
         # Leaves only the label and removes the app window
         self.tooltip.wm_overrideredirect(True)
         self.tooltip.wm_geometry("+%d+%d" % (x, y))
+
         if self.category == "icon":
-            tag_list = self.config.get_tile_data()[self.key]['tags']
-            number_of_columns = ceil(len(tag_list) / 10)
-            column_width = [0] * number_of_columns
+            item_list = self.config.get_tile_data()[self.key]['tags']
+            header = "Tags for " + string.capwords(self.key) + "\n------------\n"
+        else:
+            item_list = self.config.get_tag_data()[self.key]['icons']
+            header = "Icons for " + string.capwords(self.key) + "\n------------\n"
+        number_of_columns = ceil(len(item_list) / 10)
+        column_width = [0] * number_of_columns
 
-            # Figure out the longest tags so that the layout is spaced properly
-            index = 0
-            for tag in tag_list:
-                column_width[index] = max(column_width[index], len(tag))
-                index += 1
-                if index > number_of_columns - 1:
-                    index = 0
+        # Figure out the longest tags so that the layout is spaced properly
+        index = 0
+        for item in item_list:
+            column_width[index] = max(column_width[index], len(item))
+            index += 1
+            if index > number_of_columns - 1:
+                index = 0
 
-            # Display the tags in columns
-            index = 0
-            column_index = 0
-            output = ''
-            for tag in tag_list:
-                last_entry = index == len(tag_list) - 1
-                beginning_of_column = column_index == 0
-                middle_of_column = column_index < number_of_columns - 1
-                end_of_column = column_index == number_of_columns - 1
-                if last_entry:
-                    if beginning_of_column:
-                        # Entry is the last in the tag list AND at the beginning of a column
-                        output = output + '{tag: <{width}}'.format(tag=string.capwords(tag), width=column_width[column_index] + 2)
-                    elif last_entry and not beginning_of_column:
-                        # Entry is the last in the tag list but not at the beginning of a column
-                        output = output + '  {tag: <{width}}'.format(tag=string.capwords(tag), width=column_width[column_index] + 2)
-                else:
-                    if beginning_of_column and not end_of_column:
-                        # If the item is not the last item and is at the start of a 2+ column display.
-                        output = output + '{tag: <{width}}'.format(tag=string.capwords(tag), width=column_width[column_index] + 2) + '|'
-                    elif beginning_of_column and end_of_column:
-                        # If the item is not the last item and is at the start of a 1 column display.
-                        output = output + '{tag: <{width}}'.format(tag=string.capwords(tag), width=column_width[column_index] + 2) + '\n'
-                    elif middle_of_column:
-                        # If the item is in the middle of a 3+ column display.
-                        output = output + '  {tag: <{width}}'.format(tag=string.capwords(tag), width=column_width[column_index] + 2) + '|'
-                    elif end_of_column:
-                        # If the item is at the end of a 2+ column display.
-                        output = output + '  {tag: <{width}}'.format(tag=string.capwords(tag), width=column_width[column_index] + 2) + '\n'
-                index += 1
-                column_index += 1
-                if column_index > number_of_columns - 1:
-                    column_index = 0
-
-            tooltip_text = "Tags for " + string.capwords(self.key) + "\n------------\n" + output
-        elif self.category == "tag":
-            icon_list = self.config.get_tag_data()[self.key]['icons']
-            number_of_columns = ceil(len(icon_list) / 10)
-            column_width = [0] * number_of_columns
-
-            # Figure out the longest tag in each column so that the layout is spaced properly
-            index = 0
-            for icon in icon_list:
-                column_width[index] = max(column_width[index], len(icon))
-                index += 1
-                if index > number_of_columns - 1:
-                    index = 0
-
-            # Display the tags in columns
-            index = 0
-            column_index = 0
-            output = ''
-            for icon in icon_list:
-                last_entry = index == len(icon_list) - 1
-                beginning_of_column = column_index == 0
-                middle_of_column = column_index < number_of_columns - 1
-                end_of_column = column_index == number_of_columns - 1
-                if last_entry:
-                    if beginning_of_column:
-                        # Entry is the last in the tag list AND at the beginning of a column
-                        output = output + '{tag: <{width}}'.format(tag=string.capwords(icon),
-                                                                   width=column_width[column_index] + 2)
-                    elif last_entry and not beginning_of_column:
-                        # Entry is the last in the tag list but not at the beginning of a column
-                        output = output + '  {tag: <{width}}'.format(tag=string.capwords(icon),
-                                                                     width=column_width[column_index] + 2)
-                else:
-                    if beginning_of_column and not end_of_column:
-                        # If the item is not the last item and is at the start of a 2+ column display.
-                        output = output + '{tag: <{width}}'.format(tag=string.capwords(icon),
-                                                                   width=column_width[column_index] + 2) + '|'
-                    elif beginning_of_column and end_of_column:
-                        # If the item is not the last item and is at the start of a 1 column display.
-                        output = output + '{tag: <{width}}'.format(tag=string.capwords(icon),
-                                                                   width=column_width[column_index] + 2) + '\n'
-                    elif middle_of_column:
-                        # If the item is in the middle of a 3+ column display.
-                        output = output + '  {tag: <{width}}'.format(tag=string.capwords(icon),
-                                                                     width=column_width[column_index] + 2) + '|'
-                    elif end_of_column:
-                        # If the item is at the end of a 2+ column display.
-                        output = output + '  {tag: <{width}}'.format(tag=string.capwords(icon),
-                                                                     width=column_width[column_index] + 2) + '\n'
-                index += 1
-                column_index += 1
-                if column_index > number_of_columns - 1:
-                    column_index = 0
-
-            tooltip_text = "Icons for " + string.capwords(self.key) + "\n------------\n" + output
+        # Display the tags in columns
+        index = 0
+        column_index = 0
+        output = ''
+        for item in item_list:
+            last_entry = index == len(item_list) - 1
+            beginning_of_column = column_index == 0
+            middle_of_column = column_index < number_of_columns - 1
+            end_of_column = column_index == number_of_columns - 1
+            if last_entry:
+                if beginning_of_column:
+                    # Entry is the last in the tag list AND at the beginning of a column
+                    output = output + '{tag: <{width}}'.format(tag=string.capwords(item),
+                                                               width=column_width[column_index] + 2)
+                elif last_entry and not beginning_of_column:
+                    # Entry is the last in the tag list but not at the beginning of a column
+                    output = output + '  {tag: <{width}}'.format(tag=string.capwords(item),
+                                                                 width=column_width[column_index] + 2)
+            else:
+                if beginning_of_column and not end_of_column:
+                    # If the item is not the last item and is at the start of a 2+ column display.
+                    output = output + '{tag: <{width}}'.format(tag=string.capwords(item),
+                                                               width=column_width[column_index] + 2) + '|'
+                elif beginning_of_column and end_of_column:
+                    # If the item is not the last item and is at the start of a 1 column display.
+                    output = output + '{tag: <{width}}'.format(tag=string.capwords(item),
+                                                               width=column_width[column_index] + 2) + '\n'
+                elif middle_of_column:
+                    # If the item is in the middle of a 3+ column display.
+                    output = output + '  {tag: <{width}}'.format(tag=string.capwords(item),
+                                                                 width=column_width[column_index] + 2) + '|'
+                elif end_of_column:
+                    # If the item is at the end of a 2+ column display.
+                    output = output + '  {tag: <{width}}'.format(tag=string.capwords(item),
+                                                                 width=column_width[column_index] + 2) + '\n'
+            index += 1
+            column_index += 1
+            if column_index > number_of_columns - 1:
+                column_index = 0
 
         label = tkinter.Label(self.tooltip,
-                              text=tooltip_text,
+                              text=header + output,
                               font='TkFixedFont',
                               justify='left',
                               background="#ffffff",
                               relief='solid',
-                              borderwidth=1,
-                              #wraplength=self.wrap_length
-                              )
+                              borderwidth=1)
         label.pack(ipadx=1)
 
     def hide_tooltip(self):

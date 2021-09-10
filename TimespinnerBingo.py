@@ -23,6 +23,7 @@ class TimespinnerBingo(tkinter.Frame):
         self.btnGenerate = None
         self.variables = {}
         self.candidates = {}
+        self.checkbox_events = []
 
         #
         # COLUMN 0-1 - icon settings
@@ -74,6 +75,7 @@ class TimespinnerBingo(tkinter.Frame):
             # We want to bind the mousewheel to scroll the canvas holding the checkbox
             #   If this is not done, the canvas will not scroll if the mouse is over a checkbox
             widget.bind('<MouseWheel>', icon_canvas_scroll)
+            self.checkbox_events.append(CheckboxEvents(widget, self.config, "icon", key))
             # Anchoring justifies the checkboxes against the left side
             widget.pack(anchor="w")
             objective_index += 1
@@ -143,7 +145,7 @@ class TimespinnerBingo(tkinter.Frame):
                 variable=var
             )
             # Have the checkbox start checked if the item is enabled in config
-            if self.config.get_tag_data()[key] == 'enabled':
+            if self.config.get_tag_data()[key]['enabled']:
                 widget.select()
             # Add the checkbox to the variable list so the checkbox state can be identified later
             self.variables[widget["text"]] = var
@@ -152,6 +154,7 @@ class TimespinnerBingo(tkinter.Frame):
             # We want to bind the mousewheel to scroll the canvas holding the checkbox
             #   If this is not done, the canvas will not scroll if the mouse is over a checkbox
             widget.bind('<MouseWheel>', tag_canvas_scroll)
+            self.checkbox_events.append(CheckboxEvents(widget, self.config, "tag", key))
             # Anchoring justifies the checkboxes against the left side
             widget.pack(anchor="w")
             objective_index += 1
@@ -316,7 +319,7 @@ class TimespinnerBingo(tkinter.Frame):
                 continue
 
             for tag_key in tile_data[key]['tags']:
-                if tag_data[tag_key] == 'disabled':
+                if not tag_data[tag_key]['enabled']:
                     tile_enabled_by_tags = False
 
             if tile_enabled_by_tags:
@@ -347,9 +350,9 @@ class TimespinnerBingo(tkinter.Frame):
         for key in self.config.get_tag_data().keys():
             if key == tag_name:
                 if state == 0:
-                    self.config.get_tag_data()[key] = 'disabled'
+                    self.config.get_tag_data()[key]['enabled'] = False
                 else:
-                    self.config.get_tag_data()[key] = 'enabled'
+                    self.config.get_tag_data()[key]['enabled'] = True
         self.calculate_available_icons()
         self.validate_required_icons()
         self.config.save_settings()
@@ -418,6 +421,77 @@ class TimespinnerBingo(tkinter.Frame):
         BingoBoard.BingoBoard(new_window, self.config, deepcopy(self.candidates))
         return
 
+class CheckboxEvents(object):
+    def __init__(self, widget, config=None, category="widget type", key="widget info"):
+        self.wait_time = 0
+        self.wrap_length = 500
+        self.config = config
+        self.widget = widget
+        self.category = category
+        self.key = key
+        self.widget.bind("<Enter>", self.enter)
+        self.widget.bind("<Leave>", self.leave)
+        self.id = None
+        self.tooltip = None
+        self.clicked = False
+
+    def click(self, event):
+        if self.clicked:
+            self.clicked = False
+        else:
+            self.clicked = True
+
+    def leave(self, event=None):
+        self.unschedule()
+        self.hide_tooltip()
+
+    def enter(self, event=None):
+        self.schedule()
+
+    def schedule(self):
+        self.unschedule()
+        self.id = self.widget.after(self.wait_time, self.show_tooltip)
+
+    def unschedule(self):
+        id = self.id
+        self.id = None
+        if id:
+            self.widget.after_cancel(id)
+
+    def show_tooltip(self, event=None):
+        x, y, cx, cy = self.widget.bbox("insert")
+        x += self.widget.winfo_rootx()
+        if self.widget["text"] == "":
+            y += self.widget.winfo_rooty() - (self.widget.winfo_height())
+        else:
+            x += self.widget.master.winfo_width()
+            y += self.widget.winfo_rooty() - (self.widget.winfo_height())
+        # creates a top level window
+        self.tooltip = tkinter.Toplevel(self.widget)
+        # Leaves only the label and removes the app window
+        self.tooltip.wm_overrideredirect(True)
+        self.tooltip.wm_geometry("+%d+%d" % (x, y))
+        if self.category == "icon":
+            tooltip_tags = "\n".join(string.capwords(tag) for tag in self.config.get_tile_data()[self.key]['tags'])
+            tooltip_text = "Tags for " + string.capwords(self.key) + "\n------------\n" + tooltip_tags
+        elif self.category == "tag":
+            tooltip_icons = "\n".join(string.capwords(icon) for icon in self.config.get_tag_data()[self.key]['icons'])
+            tooltip_text = "Icons tagged with " + string.capwords(self.key) + "\n--------------\n" + tooltip_icons
+
+        label = tkinter.Label(self.tooltip,
+                              text=tooltip_text,
+                              justify='left',
+                              background="#ffffff",
+                              relief='solid',
+                              borderwidth=1,
+                              wraplength=self.wrap_length)
+        label.pack(ipadx=1)
+
+    def hide_tooltip(self):
+        tw = self.tooltip
+        self.tooltip = None
+        if tw:
+            tw.destroy()
 
 if __name__ == "__main__":
     root = tkinter.Tk()

@@ -544,7 +544,7 @@ class Config(object):
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
-                        "enemies", "enemies: bosses", "quest locked"
+                        "enemies", "enemies: bosses"
                     ]
                 },
                 "gilded egg": {

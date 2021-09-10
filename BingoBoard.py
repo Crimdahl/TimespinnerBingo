@@ -6,7 +6,7 @@ import re
 from collections import defaultdict
 
 HEX_GREEN = "#008000"
-HEX_WHITE = "#FFFFFF"
+HEX_LIGHTGRAY = "#D3D3D3"
 HEX_BLACK = "#000000"
 HEX_GOLD = "#daa520"
 HEX_ALT_GREEN = "#008100"
@@ -99,7 +99,7 @@ class BingoBoard(tkinter.Frame):
                         image=image,
                         width=image.width(),
                         height=image.height(),
-                        bg=HEX_WHITE
+                        bg=HEX_LIGHTGRAY
                     )
                 else:
                     button = tkinter.Button(
@@ -109,7 +109,7 @@ class BingoBoard(tkinter.Frame):
                         width=image.width() * 2.5,
                         height=image.height() * 2,
                         compound=tkinter.BOTTOM,
-                        bg=HEX_WHITE
+                        bg=HEX_LIGHTGRAY
                     )
 
                 self.buttons[random_key].append(button)
@@ -146,12 +146,12 @@ class BingoBoard(tkinter.Frame):
                         if button["bg"] != HEX_GREEN and re.search(search_value.lower(), k.lower()):
                             button["bg"] = HEX_GOLD
                         elif button["bg"] != HEX_GREEN:
-                            button["bg"] = HEX_WHITE
+                            button["bg"] = HEX_LIGHTGRAY
         else:
             for k, v in self.buttons.items():
                 for button in v:
                     if button["bg"] == HEX_GOLD:
-                        button["bg"] = HEX_WHITE
+                        button["bg"] = HEX_LIGHTGRAY
                     elif button["bg"] == HEX_ALT_GREEN:
                         button["bg"] = HEX_GREEN
 
@@ -203,10 +203,10 @@ class ButtonEvents(object):
     # Changes button background color when the mouse hovers over the button
     def enter(self, event=None):
         self.schedule()
-        if self.widget["bg"] == HEX_WHITE:
+        if self.widget["bg"] == HEX_LIGHTGRAY:
             self.widget["bg"] = HEX_GREEN
         elif self.widget["bg"] == HEX_GREEN:
-            self.widget["bg"] = HEX_WHITE
+            self.widget["bg"] = HEX_LIGHTGRAY
         elif self.widget["bg"] == HEX_GOLD:
             self.widget["bg"] = HEX_ALT_GREEN
         elif self.widget["bg"] == HEX_ALT_GREEN:
@@ -217,10 +217,10 @@ class ButtonEvents(object):
         self.unschedule()
         self.hidetip()
         if not self.clicked:
-            if self.widget["bg"] == HEX_WHITE:
+            if self.widget["bg"] == HEX_LIGHTGRAY:
                 self.widget["bg"] = HEX_GREEN
             elif self.widget["bg"] == HEX_GREEN:
-                self.widget["bg"] = HEX_WHITE
+                self.widget["bg"] = HEX_LIGHTGRAY
             elif self.widget["bg"] == HEX_GOLD:
                 self.widget["bg"] = HEX_ALT_GREEN
             elif self.widget["bg"] == HEX_ALT_GREEN:

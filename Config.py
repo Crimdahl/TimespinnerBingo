@@ -712,7 +712,7 @@ class Config(object):
                     "enabled": True,
                     "path": "icons\\",
                     "tags": [
-                        "spells", "element: sharp", "set: forbidden"
+                        "orbs", "element: sharp", "set: forbidden"
                     ]
                 },
                 "freshwater eel": {

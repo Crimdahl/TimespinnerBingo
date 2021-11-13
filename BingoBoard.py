@@ -13,7 +13,7 @@ HEX_ALT_GREEN = "#008100"
 
 
 class BingoBoard(tkinter.Frame):
-    icon_directory = os.path.join(os.path.dirname(__file__), "Icons")
+    icon_directory = os.path.join(os.path.dirname(__file__), "icons")
 
     def __init__(self, master, config, candidates, **kw):
         super().__init__(master, **kw)
